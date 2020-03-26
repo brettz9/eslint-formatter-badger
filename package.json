@@ -1,0 +1,60 @@
+{
+  "name": "lint-badger",
+  "version": "0.1.0",
+  "description": "Create badges to reflect the number/types of passing eslint rules.",
+  "main": "src/index.js",
+  "scripts": {
+    "license-badge": "license-badger --corrections --uncategorizedLicenseTemplate \"\\${license} (\\${name} (\\${version}))\" --filteredTypes=nonempty --textTemplate \"License types\n(project, deps, and bundled devDeps)\" --packageJson --production badges/licenses-badge.svg",
+    "license-badge-dev": "license-badger --corrections --filteredTypes=nonempty --textTemplate \"License types\n(all devDeps)\" --allDevelopment badges/licenses-badge-dev.svg",
+    "license-badges": "npm run license-badge && npm run license-badge-dev",
+    "cli": "./bin/cli.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "lint-badger": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brettz9/lint-badger.git"
+  },
+  "keywords": [
+    "eslint",
+    "lint",
+    "badge"
+  ],
+  "author": "Brett Zamir <brettz9@yahoo.com> (http://brett-zamir.me/)",
+  "contributors": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brettz9/lint-badger/issues"
+  },
+  "homepage": "https://github.com/brettz9/lint-badger#readme",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "dependencies": {
+    "command-line-basics": "^0.8.0",
+    "eslint": "^6.8.0"
+  },
+  "devDependencies": {
+    "@mysticatea/eslint-plugin": "^13.0.0",
+    "eslint-config-ash-nazg": "^17.5.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-array-func": "^3.1.4",
+    "eslint-plugin-compat": "^3.5.1",
+    "eslint-plugin-eslint-comments": "^3.1.2",
+    "eslint-plugin-html": "^6.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsdoc": "^22.1.0",
+    "eslint-plugin-markdown": "^1.0.2",
+    "eslint-plugin-no-unsanitized": "^3.1.0",
+    "eslint-plugin-no-use-extend-native": "^0.4.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-sonarjs": "^0.5.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-unicorn": "^17.2.0",
+    "license-badger": "^0.12.3",
+    "typescript": "^3.8.3"
+  }
+}
