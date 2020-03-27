@@ -6,8 +6,10 @@ Create badges to reflect the number/types of passing eslint rules.
 
 ## To-dos
 
-1. Use [CLIEngine.getConfigForFile](https://eslint.org/docs/developer-guide/nodejs-api#cliengine-getconfigforfile) to find rules in action?
-1. Change package to `eslint-formatter-badger` to adhere to naming of <https://eslint.org/docs/developer-guide/working-with-custom-formatters#packaging-the-custom-formatter>.
+1. Use [CLIEngine.getConfigForFile](https://eslint.org/docs/developer-guide/nodejs-api#cliengine-getconfigforfile)
+    to find rules in action?
+1. Change package to `eslint-formatter-badger` to adhere to naming of
+    <https://eslint.org/docs/developer-guide/working-with-custom-formatters#packaging-the-custom-formatter>.
 1. Option to pass on to another reporter (so don't need to add
     [eslint-multiplexer](https://github.com/pimlie/eslint-multiplexer)
     or [eslint-formatter-multiple](https://github.com/halkeye/eslint-formatter-multiple)
