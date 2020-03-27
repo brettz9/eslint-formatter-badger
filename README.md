@@ -21,4 +21,5 @@ Create badges to reflect the number/types of passing eslint rules.
     custom variable name to template, etc.).
 1. Mention idea when ready of listing linting of dependencies per
     [eslint-plugin-privileges](https://github.com/brettz9/eslint-plugin-privileges)
-    ideas (incomplete project)
+    ideas (incomplete project), providing some security
+    or at least best practices assurances
