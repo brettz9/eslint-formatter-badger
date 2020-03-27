@@ -19,3 +19,6 @@ Create badges to reflect the number/types of passing eslint rules.
     different types, e.g., `no-eval` to `security` instead of just
     `problem` (then show these types in the results, passing in
     custom variable name to template, etc.).
+1. Mention idea when ready of listing linting of dependencies per
+    [eslint-plugin-privileges](https://github.com/brettz9/eslint-plugin-privileges)
+    ideas (incomplete project)
