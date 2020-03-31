@@ -38,25 +38,35 @@ const lintingTypes = [
 ];
 
 /**
- * @param {EslintFormatterBadgerOptions} options
+ * @external EslintResult
+ * @see https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-result-object
+ * @see For messages, see https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-message-object
+ */
+
+/**
+ * @param {EslintResult[]} results
  * @returns {Promise<void>}
  */
-module.exports = async ({
-  packagePath,
-  packageJson,
-  production,
-  allDevelopment,
-  outputPath = resolve(process.cwd(), './eslint-badge.svg'),
-  logging = false,
-  textTemplate = 'ESLint',
-  /* eslint-disable no-template-curly-in-string */
-  lintingTypeTemplate = '${type}: ${total}',
-  uncategorizedLintingTemplate = '\n${index}. ${ruleId}',
-  /* eslint-enable no-template-curly-in-string */
-  filteredTypes = null,
-  textColor = defaultTextColor,
-  lintingTypeColor = []
-}) => {
+module.exports = async (results) => {
+  /**
+   * @type {EslintFormatterBadgerOptions} options
+   */
+  const {
+    packagePath,
+    packageJson,
+    production,
+    allDevelopment,
+    outputPath = resolve(process.cwd(), './eslint-badge.svg'),
+    logging = false,
+    textTemplate = 'ESLint',
+    /* eslint-disable no-template-curly-in-string */
+    lintingTypeTemplate = '${type}: ${total}',
+    uncategorizedLintingTemplate = '\n${index}. ${ruleId}',
+    /* eslint-enable no-template-curly-in-string */
+    filteredTypes = null,
+    textColor = defaultTextColor,
+    lintingTypeColor = []
+  } = options;
   if (!outputPath || typeof outputPath !== 'string') {
     throw new TypeError('Bad output path provided.');
   }
@@ -153,6 +163,20 @@ module.exports = async ({
         ? customLintingTypeToColor.get(type)
         : color)
     ];
+  });
+
+  results.forEach(({
+    messages,
+    filePath, errorCount, warningCount
+    // , source, output
+  }) => {
+    messages.forEach(({
+      ruleId,
+      severity // 1 for warnings or 2 for errors
+      // , message, line, column, nodeType
+    }, i) => {
+
+    });
   });
 
   const sections = [
