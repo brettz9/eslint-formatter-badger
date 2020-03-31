@@ -20,6 +20,8 @@
   },
   "keywords": [
     "eslint",
+    "eslint-formatter",
+    "eslintformatter",
     "lint",
     "badge"
   ],
