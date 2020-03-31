@@ -18,6 +18,8 @@ eslint -f badger .
 
 ## To-dos
 
+1. Support/document usage if after the fact (not as eslint formatter, but acting
+    on eslint result files?)
 1. Info:
     <https://eslint.org/docs/developer-guide/working-with-custom-formatters>.
 1. Use [CLIEngine.getConfigForFile](https://eslint.org/docs/developer-guide/nodejs-api#cliengine-getconfigforfile)
