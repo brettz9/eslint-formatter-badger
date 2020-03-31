@@ -36,3 +36,7 @@ eslint -f badger .
     [eslint-plugin-privileges](https://github.com/brettz9/eslint-plugin-privileges)
     ideas (incomplete project), providing some security
     or at least best practices assurances
+1. See about getting tooltips into `badge-up` if external SVG allows; so can
+    list all linting rules per section (also add to license-badger showing
+    relevant npm packages per license type, and possibly the test names for
+    failing Mocha tests in `mocha-badge-reporter`)
