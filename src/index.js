@@ -167,7 +167,8 @@ module.exports = async (results) => {
 
   results.forEach(({
     messages,
-    filePath, errorCount, warningCount
+    filePath, // Use for config
+    errorCount, warningCount
     // , source, output
   }) => {
     messages.forEach(({
