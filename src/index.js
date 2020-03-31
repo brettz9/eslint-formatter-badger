@@ -13,38 +13,18 @@ const template = require('es6-template-strings');
 const writeFile = promisify(fs.writeFile);
 
 const defaultTextColor = ['navy'];
-const licenseTypes = [
-  ['publicDomain', {
+const lintingTypes = [
+  ['problem', {
     color: ['darkgreen'],
-    text: 'Public\ndomain'
+    text: 'Problem'
   }],
-  ['permissive', {
+  ['suggestion', {
     color: ['green'],
-    text: 'Permissive'
+    text: 'Suggestion'
   }],
-  ['weaklyProtective', {
+  ['layout', {
     color: ['CCCC00'], // dark yellow
-    text: 'Weakly\nprotective'
-  }],
-  ['protective', {
-    color: ['pink'],
-    text: 'Protective'
-  }],
-  ['networkProtective', {
-    color: ['FF69B4'], // pink
-    text: 'Network\nprotective'
-  }],
-  ['reuseProtective', {
-    color: ['red'],
-    text: 'Reuse\nprotective'
-  }],
-  ['unlicensed', {
-    color: ['black'],
-    text: 'Unlicensed'
-  }],
-  ['custom', {
-    color: ['gray'],
-    text: 'Custom'
+    text: 'Layout'
   }],
   ['uncategorized', {
     // darkgray is lighter than gray!
@@ -58,28 +38,24 @@ const licenseTypes = [
 ];
 
 /**
- * @param {LicenseBadgerOptions} options
+ * @param {EslintFormatterBadgerOptions} options
  * @returns {Promise<void>}
  */
 module.exports = async ({
   packagePath,
   packageJson,
-  corrections,
   production,
   allDevelopment,
-  outputPath = resolve(process.cwd(), './license-badge.svg'),
-  licenseInfoPath = !allDevelopment &&
-    resolve(process.cwd(), './licenseInfo.json'),
+  outputPath = resolve(process.cwd(), './eslint-badge.svg'),
   logging = false,
-  textTemplate = 'Licenses',
+  textTemplate = 'ESLint',
   /* eslint-disable no-template-curly-in-string */
-  licenseTemplate = '\n${index}. ${license}',
-  licenseTypeTemplate = '${text}',
-  uncategorizedLicenseTemplate = '${name} (${version})',
+  lintingTypeTemplate = '${type}: ${total}',
+  uncategorizedLintingTemplate = '\n${index}. ${ruleId}',
   /* eslint-enable no-template-curly-in-string */
   filteredTypes = null,
   textColor = defaultTextColor,
-  licenseTypeColor = []
+  lintingTypeColor = []
 }) => {
   if (!outputPath || typeof outputPath !== 'string') {
     throw new TypeError('Bad output path provided.');
@@ -88,33 +64,35 @@ module.exports = async ({
     textColor = textColor.split(',');
   }
 
-  const licenseTypeColorInfo = licenseTypeColor.map((typeAndColor) => {
+  const lintingTypeColorInfo = lintingTypeColor.map((typeAndColor) => {
     const [type, colors] = typeAndColor.split('=');
     return [type, colors.split(',')];
   });
-  const customLicenseTypeToColor = new Map(
-    licenseTypeColorInfo
+  const customLintingTypeToColor = new Map(
+    lintingTypeColorInfo
   );
 
-  const usedLicenses = [];
-  const licenseTypesWithUncategorized = licenseTypes.map((
+  let lintingInfo; // Todo: Get
+
+  const usedLintingTypes = [];
+  const lintingTypesWithUncategorized = lintingTypes.map((
     [type, {color, text}]
   ) => {
-    if (!licenses.has(type)) {
-      licenses.set(type, new Set());
+    if (!lintingInfo.has(type)) {
+      lintingInfo.set(type, new Set());
     }
 
     const specialTemplate = (typ, templ) => {
-      const mapped = [...licenses.get(typ)].map((
-        {name, version, custom, license}
+      const mapped = [...lintingInfo.get(typ)].map((
+        {name, custom, lintingType}
       ) => {
         return template(templ, {
-          name, version, custom, license
+          name, custom, lintingType
         });
       });
       if (mapped.length) {
         // Get rid of objects now that data mapped
-        const set = licenses.get(type);
+        const set = lintingInfo.get(type);
         set.clear();
         mapped.forEach((item) => {
           set.add(item);
@@ -124,71 +102,71 @@ module.exports = async ({
 
     switch (type) {
     case 'uncategorized':
-    case 'custom':
-    case 'unlicensed':
     case 'missing':
-      specialTemplate(type, uncategorizedLicenseTemplate);
+      specialTemplate(type, uncategorizedLintingTemplate);
       break;
     default:
       break;
     }
 
-    const licenseList = [...licenses.get(type)];
-    const licenseCount = licenseList.length;
-    usedLicenses.push(...licenseList);
-    return [type, {color, text, licenseCount, licenseList}];
+    const lintingTypeList = [...lintingInfo.get(type)];
+    const lintingTypeCount = lintingTypeList.length;
+    usedLintingTypes.push(...lintingTypeList);
+    return [type, {color, text, lintingTypeCount, lintingTypeList}];
   });
 
   filteredTypes = filteredTypes
     ? filteredTypes.split(',')
     : [];
 
-  let filteredLicenseTypes = licenseTypesWithUncategorized;
+  let filteredLintingTypes = lintingTypesWithUncategorized;
   const nonemptyPos = filteredTypes.indexOf('nonempty');
   if (nonemptyPos > -1) {
     filteredTypes.splice(nonemptyPos, 1);
-    filteredLicenseTypes = filteredLicenseTypes.filter((
-      [type, {licenseCount}]
+    filteredLintingTypes = filteredLintingTypes.filter((
+      [type, {lintingTypeCount}]
     ) => {
-      return licenseCount || filteredTypes.includes(type);
+      return lintingTypeCount || filteredTypes.includes(type);
     });
   }
 
-  const licensesWithColors = filteredLicenseTypes.map((
-    [type, {color, text, licenseCount, licenseList}]
+  const lintingTypesWithColors = filteredLintingTypes.map((
+    [type, {color, text, lintingTypeCount, lintingTypeList}]
   ) => {
-    const glue = (license, index) => {
-      return template(licenseTemplate, {
-        license,
+    const glue = (lintingType, index) => {
+      return template(lintingTypeTemplate, {
+        lintingType,
         index
       });
     };
     return [
-      `${template(licenseTypeTemplate, {
+      `${template(lintingTypeTemplate, {
         text,
-        licenseCount
-      })}\n${licenseCount
-        ? licenseList.sort().map((license, i) => {
-          return glue(license, i + 1);
+        lintingTypeCount
+      })}\n${lintingTypeCount
+        ? lintingTypeList.sort().map((lintingType, i) => {
+          return glue(lintingType, i + 1);
         }).join('')
         : ''
       }`,
-      ...(customLicenseTypeToColor.has(type)
-        ? customLicenseTypeToColor.get(type)
+      ...(customLintingTypeToColor.has(type)
+        ? customLintingTypeToColor.get(type)
         : color)
     ];
   });
 
   const sections = [
     [template(textTemplate, {
-      licenseCount: usedLicenses.length
+      lintingTypeCount: usedLintingTypes.length
     }), ...textColor],
-    ...licensesWithColors
+    ...lintingTypesWithColors
   ];
 
   if (logging === 'verbose') {
     // eslint-disable-next-line no-console
-    console.log('Using licenses', licenses, '\nprinting sections:\n', sections);
+    console.log(
+      'Using linting', lintingInfo, '\nprinting sections:\n', sections
+    );
   }
 
   const svg = await badgeUp(sections);
