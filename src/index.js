@@ -1,6 +1,6 @@
 'use strict';
 
-// Todo: Convert this for lint-badger! Should use colors depending
+// Todo: Convert this for eslint-formatter-badger! Should use colors depending
 //   on failing thresholds instead
 
 const fs = require('fs');

@@ -1,5 +1,5 @@
 {
-  "name": "lint-badger",
+  "name": "eslint-formatter-badger",
   "version": "0.1.0",
   "description": "Create badges to reflect the number/types of passing eslint rules.",
   "main": "src/index.js",
@@ -12,11 +12,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "lint-badger": "./bin/cli.js"
+    "eslint-formatter-badger": "./bin/cli.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brettz9/lint-badger.git"
+    "url": "git+https://github.com/brettz9/eslint-formatter-badger.git"
   },
   "keywords": [
     "eslint",
@@ -27,9 +27,9 @@
   "contributors": [],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/brettz9/lint-badger/issues"
+    "url": "https://github.com/brettz9/eslint-formatter-badger/issues"
   },
-  "homepage": "https://github.com/brettz9/lint-badger#readme",
+  "homepage": "https://github.com/brettz9/eslint-formatter-badger#readme",
   "engines": {
     "node": ">=10.0.0"
   },

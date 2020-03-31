@@ -87,7 +87,7 @@ const cliSections = [
   {
     // Add italics: `{italic textToItalicize}`
     content: pkg.description +
-      '\n\n{italic lint-badger [outputPath]}'
+      '\n\n{italic eslint-formatter-badger [outputPath]}'
   },
   {
     optionList: optionDefinitions
