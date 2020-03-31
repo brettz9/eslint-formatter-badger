@@ -21,7 +21,8 @@ eslint -f badger .
 1. Info:
     <https://eslint.org/docs/developer-guide/working-with-custom-formatters>.
 1. Use [CLIEngine.getConfigForFile](https://eslint.org/docs/developer-guide/nodejs-api#cliengine-getconfigforfile)
-    to find rules in action? Use user's `overrides` to get necessary config?
+    to find rules in action. For file paths, can look at results passed to formatter
+    for all possible files (caching the config for each file).
 1. Option to pass on to another reporter (so don't need to add
     [eslint-multiplexer](https://github.com/pimlie/eslint-multiplexer)
     or [eslint-formatter-multiple](https://github.com/halkeye/eslint-formatter-multiple)
