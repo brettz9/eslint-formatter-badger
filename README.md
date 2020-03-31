@@ -4,6 +4,18 @@ Create badges to reflect the number/types of passing eslint rules.
 
 **NOTE: This project is not yet functional.**
 
+## Installation
+
+```sh
+npm i eslint-formatter-badger
+```
+
+## Usage
+
+```sh
+eslint -f badger .
+```
+
 ## To-dos
 
 1. Use [CLIEngine.getConfigForFile](https://eslint.org/docs/developer-guide/nodejs-api#cliengine-getconfigforfile)
