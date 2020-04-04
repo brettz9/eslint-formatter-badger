@@ -15,24 +15,15 @@ const writeFile = promisify(fs.writeFile);
 const defaultTextColor = ['navy'];
 const lintingTypes = [
   ['problem', {
-    color: ['darkgreen'],
     text: 'Problem'
   }],
   ['suggestion', {
-    color: ['green'],
     text: 'Suggestion'
   }],
   ['layout', {
-    color: ['CCCC00'], // dark yellow
     text: 'Layout'
   }],
-  ['uncategorized', {
-    // darkgray is lighter than gray!
-    color: ['darkgray'],
-    text: 'Uncategorized'
-  }],
   ['missing', {
-    color: ['lightgray'],
     text: 'Missing'
   }]
 ];
@@ -52,41 +43,42 @@ module.exports = async (results) => {
    * @type {EslintFormatterBadgerOptions} options
    */
   const {
-    packagePath,
-    packageJson,
-    production,
-    allDevelopment,
+    // Path to module returning or JSON of custom map between
+    //   rule names and categories (including existing like "layout"
+    //   (in case rule doesn't have own meta) or new ones like
+    //   "security" or "performance")
+    ruleMapPath,
     outputPath = resolve(process.cwd(), './eslint-badge.svg'),
     logging = false,
-    textTemplate = 'ESLint',
+    failingColor = 'red',
+    mediumColor = 'CCCC00', // dark yellow
+    passingColor = 'green',
+    singlePane = false, // Whether to only create one template (also using `lintingTypeTemplate`)
+    mediumThresholds, // "suggestion=30;layout=40" or just "40"
+    passingThresholds, // "suggestion=75;layout=90" or just "80"
     /* eslint-disable no-template-curly-in-string */
-    lintingTypeTemplate = '${type}: ${total}',
-    uncategorizedLintingTemplate = '\n${index}. ${ruleId}',
+    mainTemplate = 'ESLint (${total} rules)',
+    lintingTypeTemplate = '${type}: ${typeTotal}',
+    missingLintingTemplate = '\n${index}. ${ruleId}'
     /* eslint-enable no-template-curly-in-string */
-    filteredTypes = null,
-    textColor = defaultTextColor,
-    lintingTypeColor = []
   } = options;
   if (!outputPath || typeof outputPath !== 'string') {
     throw new TypeError('Bad output path provided.');
   }
-  if (typeof textColor === 'string') {
-    textColor = textColor.split(',');
-  }
-
-  const lintingTypeColorInfo = lintingTypeColor.map((typeAndColor) => {
-    const [type, colors] = typeAndColor.split('=');
-    return [type, colors.split(',')];
-  });
-  const customLintingTypeToColor = new Map(
-    lintingTypeColorInfo
-  );
+  let {
+    textColor = defaultTextColor,
+    filteredTypes = null
+  } = options;
 
   let lintingInfo; // Todo: Get
 
   const usedLintingTypes = [];
-  const lintingTypesWithUncategorized = lintingTypes.map((
-    [type, {color, text}]
+
+  // Todo: Merge with user's own map
+  // singlePane = false, // Whether to only create one template
+  //   (also using `lintingTypeTemplate`)
+  const lintingTypesWithMissing = lintingTypes.map((
+    [type, {text}]
   ) => {
     if (!lintingInfo.has(type)) {
       lintingInfo.set(type, new Set());
@@ -111,9 +103,8 @@ module.exports = async (results) => {
     };
 
     switch (type) {
-    case 'uncategorized':
     case 'missing':
-      specialTemplate(type, uncategorizedLintingTemplate);
+      specialTemplate(type, missingLintingTemplate);
       break;
     default:
       break;
@@ -122,14 +113,14 @@ module.exports = async (results) => {
     const lintingTypeList = [...lintingInfo.get(type)];
     const lintingTypeCount = lintingTypeList.length;
     usedLintingTypes.push(...lintingTypeList);
-    return [type, {color, text, lintingTypeCount, lintingTypeList}];
+    return [type, {text, lintingTypeCount, lintingTypeList}];
   });
 
   filteredTypes = filteredTypes
     ? filteredTypes.split(',')
     : [];
 
-  let filteredLintingTypes = lintingTypesWithUncategorized;
+  let filteredLintingTypes = lintingTypesWithMissing;
   const nonemptyPos = filteredTypes.indexOf('nonempty');
   if (nonemptyPos > -1) {
     filteredTypes.splice(nonemptyPos, 1);
@@ -141,7 +132,7 @@ module.exports = async (results) => {
   }
 
   const lintingTypesWithColors = filteredLintingTypes.map((
-    [type, {color, text, lintingTypeCount, lintingTypeList}]
+    [type, {text, lintingTypeCount, lintingTypeList}]
   ) => {
     const glue = (lintingType, index) => {
       return template(lintingTypeTemplate, {
@@ -149,6 +140,14 @@ module.exports = async (results) => {
         index
       });
     };
+
+    failingColor = 'red',
+    mediumColor = 'CCCC00', // dark yellow
+    passingColor = 'green',
+
+    mediumThresholds, // "suggestion=30;layout=40" or just "40"
+    passingThresholds; // "suggestion=75;layout=90" or just "80"
+
     return [
       `${template(lintingTypeTemplate, {
         text,
@@ -159,9 +158,7 @@ module.exports = async (results) => {
         }).join('')
         : ''
       }`,
-      ...(customLintingTypeToColor.has(type)
-        ? customLintingTypeToColor.get(type)
-        : color)
+      ...color
     ];
   });
 
@@ -180,9 +177,13 @@ module.exports = async (results) => {
     });
   });
 
+  if (typeof textColor === 'string') {
+    textColor = textColor.split(',');
+  }
   const sections = [
-    [template(textTemplate, {
-      lintingTypeCount: usedLintingTypes.length
+    [template(mainTemplate, {
+      // lintingTypeCount: usedLintingTypes.length
+      total
     }), ...textColor],
     ...lintingTypesWithColors
   ];
