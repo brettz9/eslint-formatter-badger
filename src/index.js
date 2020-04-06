@@ -79,10 +79,6 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   const rulesMetaEntries = Object.entries(rulesMeta);
   const total = rulesMetaEntries.length;
 
-  // USED TYPES (passing or failing); user may not want to see panels for
-  //   types that are unused.
-  const usedLintingTypes = new Set();
-
   // DEFINITIONS OF USER
   const userRuleIdToType = ruleMap
     ? typeof ruleMap === 'string'
@@ -110,7 +106,6 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     if (!type) {
       type = 'missing';
     }
-    usedLintingTypes.add(type);
     obj[ruleId] = type;
     return obj;
   }, {});
@@ -288,8 +283,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   }
   const sections = [
     [template(mainTemplate, {
-      // failing:
-      //    usedLintingTypes.length ?
+      // failing?
       total,
       errorTotal: aggregatedErrorCount,
       warningTotal: aggregatedWarningCount,
