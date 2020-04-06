@@ -208,20 +208,12 @@ module.exports = async (results, {rulesMeta}) => {
     ];
   });
 
-  results.forEach(({
-    messages,
-    filePath, // Use for config
-    errorCount,
-    warningCount
-    // , output
-  }) => {
-    messages.forEach(({
-      ruleId,
-      severity, // 1 for warnings or 2 for errors
-      message // , line, column, nodeType
-    }, i) => {
-      const type = rulesToType[ruleId]; // e.g., "layout"
-    });
+  aggregatedMessages.forEach(({
+    ruleId,
+    severity, // 1 for warnings or 2 for errors
+    message // , line, column, nodeType
+  }, i) => {
+    const type = rulesToType[ruleId]; // e.g., "layout"
   });
 
   if (typeof textColor === 'string') {
