@@ -68,6 +68,8 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     passingColor = 'green',
     // Whether to only create one template (also using `lintingTypeTemplate`)
     singlePane = false,
+    mediumThreshold, // "80%" or "9"
+    passingThreshold, // "95%" or "2"
     mediumThresholds, // "suggestion=30;layout=40" or just "40"
     passingThresholds, // "suggestion=75;layout=90" or just "80"
     /* eslint-disable no-template-curly-in-string */
@@ -190,16 +192,28 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   );
 
   // Note: These messages are not in a consistent order
-  const usedTypesToCount = aggregatedMessages.reduce((obj, {
-    ruleId
-    // severity, // 1 for warnings or 2 for errors
+  const usedTypesToCounts = aggregatedMessages.reduce((obj, {
+    ruleId,
+    severity // 1 for warnings or 2 for errors
     // message // , line, column, nodeType
   }) => {
     const type = rulesToType[ruleId]; // e.g., "layout"
     if (!obj[type]) {
-      obj[type] = 0;
+      obj[type] = {
+        failing: 0,
+        warnings: 0,
+        errors: 0
+      };
     }
-    obj[type]++;
+    obj[type].failing++;
+    switch (severity) {
+    case 1:
+      obj[type].warnings++;
+      break;
+    /* case 2: */ default:
+      obj[type].errors++;
+      break;
+    }
     return obj;
   }, {});
 
@@ -217,8 +231,11 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     mediumColor = 'CCCC00', // dark yellow
     passingColor = 'green',
 
-    mediumThresholds, // "suggestion=30;layout=40" or just "40"
-    passingThresholds; // "suggestion=75;layout=90" or just "80"
+    // Todo: Make separate thresholds for errors and warnings?
+    mediumThreshold, // "80%" or "9"
+    passingThreshold, // "95%" or "2"
+    mediumThresholdByType, // "suggestion=6;layout=10" or just "9"
+    passingThresholdByType; // "suggestion=0;layout=1" or just "2"
 
     return [
       `${template(lintingTypeTemplate, {
