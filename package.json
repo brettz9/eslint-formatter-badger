@@ -7,6 +7,8 @@
     "license-badge": "license-badger --corrections --uncategorizedLicenseTemplate \"\\${license} (\\${name} (\\${version}))\" --filteredTypes=nonempty --textTemplate \"License types\n(project, deps, and bundled devDeps)\" --packageJson --production badges/licenses-badge.svg",
     "license-badge-dev": "license-badger --corrections --filteredTypes=nonempty --textTemplate \"License types\n(all devDeps)\" --allDevelopment badges/licenses-badge-dev.svg",
     "license-badges": "npm run license-badge && npm run license-badge-dev",
+    "build-cli-svg": "clp --format=svg --config=src/optionDefinitions.js badges/cli.svg",
+    "build-cli": "npm run build-cli-svg",
     "eslint": "eslint --ext=js,md,html .",
     "cli": "./bin/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -43,6 +45,7 @@
   },
   "devDependencies": {
     "@mysticatea/eslint-plugin": "^13.0.0",
+    "command-line-publish": "^0.7.0",
     "eslint-config-ash-nazg": "^18.0.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-array-func": "^3.1.4",

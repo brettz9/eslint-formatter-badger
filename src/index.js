@@ -40,6 +40,9 @@ const lintingTypes = [
 * @see https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
 */
 
+// eslint-disable-next-line import/no-dynamic-require
+const options = require(resolve(process.cwd(), './package.json'));
+
 /**
  * @param {ESLintResult[]} results
  * @param {PlainObject} data
@@ -55,7 +58,7 @@ module.exports = async (results, {rulesMeta}) => {
     //   rule names and categories (including existing like "layout"
     //   (in case rule doesn't have own meta) or new ones like
     //   "security" or "performance")
-    ruleMapPath,
+    ruleMap,
     outputPath = resolve(process.cwd(), './eslint-badge.svg'),
     logging = false,
     failingColor = 'red',
@@ -82,7 +85,7 @@ module.exports = async (results, {rulesMeta}) => {
   const rulesMetaEntries = Object.entries(rulesMeta);
   const total = rulesMetaEntries.length;
 
-  const rulesToType = rulesMetaEntries.reduce((obj, [ruleId, {
+  let rulesToType = rulesMetaEntries.reduce((obj, [ruleId, {
     type
     // Might also use destructure `docs` and then use:
     //   const {category} = docs || {}; // "Possible Errors"
@@ -90,6 +93,13 @@ module.exports = async (results, {rulesMeta}) => {
     obj[ruleId] = type;
     return obj;
   }, {});
+  if (ruleMap) {
+    const userRulesToType = typeof ruleMap === 'string'
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      ? require(ruleMap)
+      : ruleMap;
+    rulesToType = {...rulesToType, ...userRulesToType};
+  }
 
   let lintingInfo; // Todo: Get
 

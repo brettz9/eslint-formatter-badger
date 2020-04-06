@@ -40,6 +40,14 @@ const optionDefinitions = [
     typeLabel: '{underline list of "nonempty" or value}'
   },
   {
+    name: 'ruleMap', type: String,
+    description: 'Path to module which returns an object map of ESLint ' +
+      'rule IDs to type (whether from the built-in `meta.type`\'s, ' +
+      '"problem", "suggestion", or "layout", or a custom type, e.g.,' +
+      '"security")',
+    typeLabel: '{underline path-to-map}'
+  },
+  {
     name: 'textColor', type: String,
     description: 'Color for "Linting" subject. Follow by comma for ' +
       'additional (e.g., to add a stroke color)',
