@@ -82,25 +82,29 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   //   types that are unused.
   const usedLintingTypes = new Set();
 
+  // DEFINITIONS OF USER
+  const userRulesToType = ruleMap
+    ? typeof ruleMap === 'string'
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      ? require(ruleMap)
+      : ruleMap
+    : {};
+
   // ALL RULES USED (passing or failing)
-  let rulesToType = rulesMetaEntries.reduce((obj, [ruleId, {
+  const rulesToType = rulesMetaEntries.reduce((obj, [ruleId, {
     type
     // Might also use destructure `docs` and then use:
     //   const {category} = docs || {}; // "Possible Errors"
   }]) => {
+    if (userRulesToType[ruleId]) {
+      type = userRulesToType[ruleId];
+    } else if (!type) {
+      type = 'missing';
+    }
     usedLintingTypes.add(type);
     obj[ruleId] = type;
     return obj;
   }, {});
-
-  // ALL DEFINITIONS OF USER
-  if (ruleMap) {
-    const userRulesToType = typeof ruleMap === 'string'
-      // eslint-disable-next-line global-require, import/no-dynamic-require
-      ? require(ruleMap)
-      : ruleMap;
-    rulesToType = {...rulesToType, ...userRulesToType};
-  }
 
   // Unlike other reporters, unlikely to need to report on each file
   //  separately (i.e., to make a separate badge for each file)
