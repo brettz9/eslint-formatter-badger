@@ -79,37 +79,6 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   const rulesMetaEntries = Object.entries(rulesMeta);
   const total = rulesMetaEntries.length;
 
-  // DEFINITIONS OF USER
-  const userRuleIdToType = ruleMap
-    ? typeof ruleMap === 'string'
-      // eslint-disable-next-line global-require, import/no-dynamic-require
-      ? require(ruleMap)
-      : ruleMap
-    : {};
-
-  // ALL POSSIBLE TYPES PER USER (if any) + DEFAULTS
-  const lintingTypes = ruleMap
-    ? [...new Set([
-      ...defaultLintingTypes, ...Object.values(userRuleIdToType)
-    ])]
-    : defaultLintingTypes;
-
-  // ALL RULES USED (passing or failing)
-  const ruleIdToType = rulesMetaEntries.reduce((obj, [ruleId, {
-    type
-    // Might also use destructure `docs` and then use:
-    //   const {category} = docs || {}; // "Possible Errors"
-  }]) => {
-    if (userRuleIdToType[ruleId]) {
-      type = userRuleIdToType[ruleId];
-    }
-    if (!type) {
-      type = 'missing';
-    }
-    obj[ruleId] = type;
-    return obj;
-  }, {});
-
   // Unlike other reporters, unlikely to need to report on each file
   //  separately (i.e., to make a separate badge for each file)
   const aggregatedMessages = [];
@@ -135,6 +104,65 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
       aggregatedLineCount += source.split('\n').length;
     })
   );
+
+  /**
+   * @returns {void}
+   */
+  async function printBadge () {
+    const sections = [
+      [template(mainTemplate, {
+        // failing?
+        total,
+        errorTotal: aggregatedErrorCount,
+        warningTotal: aggregatedWarningCount,
+        lineTotal: aggregatedLineCount
+      }), ...textColor],
+      ...lintingTypesWithColors
+    ];
+
+    if (logging === 'verbose') {
+      // eslint-disable-next-line no-console
+      console.log(
+        'Using linting', lintingInfo, '\nprinting sections:\n', sections
+      );
+    }
+
+    const svg = await badgeUp(sections);
+    await writeFile(outputPath, svg);
+  }
+
+  if (typeof textColor === 'string') {
+    textColor = textColor.split(',');
+  }
+
+  if (!singlePane) {
+    await printBadge();
+    return;
+  }
+
+  // DEFINITIONS OF USER
+  const userRuleIdToType = ruleMap
+    ? typeof ruleMap === 'string'
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      ? require(ruleMap)
+      : ruleMap
+    : {};
+
+  // ALL RULES USED (passing or failing)
+  const ruleIdToType = rulesMetaEntries.reduce((obj, [ruleId, {
+    type
+    // Might also use destructure `docs` and then use:
+    //   const {category} = docs || {}; // "Possible Errors"
+  }]) => {
+    if (userRuleIdToType[ruleId]) {
+      type = userRuleIdToType[ruleId];
+    }
+    if (!type) {
+      type = 'missing';
+    }
+    obj[ruleId] = type;
+    return obj;
+  }, {});
 
   // FAILING TYPE COUNTS ONLY
   // Note: These messages are not in a consistent order
@@ -165,8 +193,13 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     return obj;
   }, {});
 
-  // singlePane = false, // Whether to only create one template
-  //   (also using `lintingTypeTemplate`)
+  // ALL POSSIBLE TYPES PER USER (if any) + DEFAULTS
+  const lintingTypes = ruleMap
+    ? [...new Set([
+      ...defaultLintingTypes, ...Object.values(userRuleIdToType)
+    ])]
+    : defaultLintingTypes;
+
   const lintingTypesWithMissing = lintingTypes.map((type) => {
     const text = type.charAt().toUpperCase() + type.slice(1);
     if (!lintingInfo[type]) {
@@ -278,27 +311,5 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     ];
   });
 
-  if (typeof textColor === 'string') {
-    textColor = textColor.split(',');
-  }
-  const sections = [
-    [template(mainTemplate, {
-      // failing?
-      total,
-      errorTotal: aggregatedErrorCount,
-      warningTotal: aggregatedWarningCount,
-      lineTotal: aggregatedLineCount
-    }), ...textColor],
-    ...lintingTypesWithColors
-  ];
-
-  if (logging === 'verbose') {
-    // eslint-disable-next-line no-console
-    console.log(
-      'Using linting', lintingInfo, '\nprinting sections:\n', sections
-    );
-  }
-
-  const svg = await badgeUp(sections);
-  await writeFile(outputPath, svg);
+  await printBadge();
 };
