@@ -132,12 +132,14 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
 
   /**
    * Gets the color per current counts and thresholds.
+   * @param {string} mediumThresh
+   * @param {string} passingThresh
    * @returns {string[]}
   */
-  function getColorForCount () {
+  function getColorForCount (mediumThresh, passingThresh) {
     let color;
-    color = checkThreshold(color, passingThreshold, passingColor);
-    color = checkThreshold(color, mediumThreshold, mediumColor);
+    color = checkThreshold(color, passingThresh, passingColor);
+    color = checkThreshold(color, mediumThresh, mediumColor);
     if (!color) {
       color = failingColor;
     }
@@ -163,7 +165,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
             errorWarningsPct: aggregatedErrorsAndWarningsPct
           }
         ),
-        ...(textColor || [getColorForCount()])
+        ...(textColor || [getColorForCount(mediumThreshold, passingThreshold)])
       ],
       ...lintingTypesWithColors
     ];
@@ -312,6 +314,60 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     });
   }
 
+  const thresholdContainer = {
+    medium: null,
+    passing: null
+  };
+
+  /**
+   * @param {string} range
+   * @param {string} thresholds
+   * @returns {void}
+   */
+  const parseThreshold = (range, thresholds) => {
+    const typeThresholds = thresholds.split(';');
+    if (typeThresholds.length === 1) {
+      thresholdContainer[range] = typeThresholds[0];
+      return;
+    }
+    thresholdContainer[range] = {};
+    typeThresholds.forEach((typeThreshold) => {
+      const [type, value] = typeThreshold.split('=');
+      thresholdContainer[range][type] = value;
+    });
+  };
+  // "suggestion=6;layout=10" or just "9"
+  parseThreshold('passing', passingThresholds);
+  parseThreshold('medium', mediumThresholds);
+
+  /**
+   * @param {string} type
+   * @param {"passing"|"medium"} range
+   * @returns {string}
+   */
+  function getThresholdForRangeAndType (type, range) {
+    let thresh;
+    if (thresholdContainer[range] !== null) {
+      if (typeof thresholdContainer[range] === 'string') {
+        thresh = thresholdContainer[range];
+      } else {
+        thresh = thresholdContainer[range][type];
+      }
+    }
+    return thresh;
+  }
+  /**
+   * @param {string} type
+   * @returns {string[]}
+   */
+  function getColorForThresholds (type) {
+    const color = getColorForCount(
+      getThresholdForRangeAndType('medium', type),
+      getThresholdForRangeAndType('passing', type)
+    );
+    return [color];
+  }
+
   const lintingTypesWithColors = filteredLintingTypes.map((
     [type, {
       text, ruleIds,
@@ -325,9 +381,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
       });
     };
 
-    // Todo:
-    mediumThresholds; // "suggestion=6;layout=10" or just "9"
-    passingThresholds; // "suggestion=0;layout=1" or just "2"
+    const color = getColorForThresholds(type);
 
     return [
       `${template(lintingTypeTemplate, {
