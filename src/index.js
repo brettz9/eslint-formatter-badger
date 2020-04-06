@@ -29,16 +29,23 @@ const lintingTypes = [
 ];
 
 /**
- * @external EslintResult
+ * @external ESLintResult
  * @see https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-result-object
  * @see For messages, see https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-message-object
  */
 
 /**
- * @param {EslintResult[]} results
+* @external ESLintRulesMetaData
+* @see https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
+*/
+
+/**
+ * @param {ESLintResult[]} results
+ * @param {PlainObject} data
+ * @param {ESLintRulesMetaData} data.rulesMeta
  * @returns {Promise<void>}
  */
-module.exports = async (results) => {
+module.exports = async (results, {rulesMeta}) => {
   /**
    * @type {EslintFormatterBadgerOptions} options
    */
