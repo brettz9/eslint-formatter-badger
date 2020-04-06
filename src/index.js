@@ -37,7 +37,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   // eslint-disable-next-line import/no-dynamic-require, global-require
   const options = require(
     packageJsonPath || resolve(process.cwd(), './package.json')
-  );
+  ).eslintFormatterBadgerOptions;
 
   /**
    * @type {EslintFormatterBadgerOptions} options
