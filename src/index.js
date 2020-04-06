@@ -15,18 +15,7 @@ const writeFile = promisify(fs.writeFile);
 
 const defaultTextColor = ['navy'];
 const lintingTypes = [
-  ['problem', {
-    text: 'Problem'
-  }],
-  ['suggestion', {
-    text: 'Suggestion'
-  }],
-  ['layout', {
-    text: 'Layout'
-  }],
-  ['missing', {
-    text: 'Missing'
-  }]
+  'problem', 'suggestion', 'layout', 'missing'
 ];
 
 /**
@@ -89,14 +78,22 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   const rulesMetaEntries = Object.entries(rulesMeta);
   const total = rulesMetaEntries.length;
 
+  // USED TYPES (passing or failing); user may not want to see panels for
+  //   types that are unused.
+  const usedLintingTypes = new Set();
+
+  // ALL RULES USED (passing or failing)
   let rulesToType = rulesMetaEntries.reduce((obj, [ruleId, {
     type
     // Might also use destructure `docs` and then use:
     //   const {category} = docs || {}; // "Possible Errors"
   }]) => {
+    usedLintingTypes.add(type);
     obj[ruleId] = type;
     return obj;
   }, {});
+
+  // ALL DEFINITIONS OF USER
   if (ruleMap) {
     const userRulesToType = typeof ruleMap === 'string'
       // eslint-disable-next-line global-require, import/no-dynamic-require
@@ -105,72 +102,12 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     rulesToType = {...rulesToType, ...userRulesToType};
   }
 
-  let lintingInfo; // Todo: Get
-
-  const usedLintingTypes = [];
-
-  // Todo: Merge with user's own map
-  // singlePane = false, // Whether to only create one template
-  //   (also using `lintingTypeTemplate`)
-  const lintingTypesWithMissing = lintingTypes.map((
-    [type, {text}]
-  ) => {
-    if (!lintingInfo.has(type)) {
-      lintingInfo.set(type, new Set());
-    }
-
-    const specialTemplate = (typ, templ) => {
-      const mapped = [...lintingInfo.get(typ)].map((
-        {name, custom, lintingType}
-      ) => {
-        return template(templ, {
-          name, custom, lintingType
-        });
-      });
-      if (mapped.length) {
-        // Get rid of objects now that data mapped
-        const set = lintingInfo.get(type);
-        set.clear();
-        mapped.forEach((item) => {
-          set.add(item);
-        });
-      }
-    };
-
-    switch (type) {
-    case 'missing':
-      specialTemplate(type, missingLintingTemplate);
-      break;
-    default:
-      break;
-    }
-
-    const lintingTypeList = [...lintingInfo.get(type)];
-    const lintingTypeCount = lintingTypeList.length;
-    usedLintingTypes.push(...lintingTypeList);
-    return [type, {text, lintingTypeCount, lintingTypeList}];
-  });
-
-  filteredTypes = filteredTypes
-    ? filteredTypes.split(',')
-    : [];
-
-  let filteredLintingTypes = lintingTypesWithMissing;
-  const nonemptyPos = filteredTypes.indexOf('nonempty');
-  if (nonemptyPos > -1) {
-    filteredTypes.splice(nonemptyPos, 1);
-    filteredLintingTypes = filteredLintingTypes.filter((
-      [type, {lintingTypeCount}]
-    ) => {
-      return lintingTypeCount || filteredTypes.includes(type);
-    });
-  }
-
   // Unlike other reporters, unlikely to need to report on each file
   //  separately (i.e., to make a separate badge for each file)
   const aggregatedMessages = [];
   let aggregatedErrorCount = 0;
   let aggregatedWarningCount = 0;
+  // Includes both passing and failing files
   let aggregatedLineCount = 0;
   await Promise.all(
     results.map(async ({
@@ -191,8 +128,9 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     })
   );
 
+  // FAILING TYPE COUNTS ONLY
   // Note: These messages are not in a consistent order
-  const usedTypesToCounts = aggregatedMessages.reduce((obj, {
+  const lintingInfo = aggregatedMessages.reduce((obj, {
     ruleId,
     severity // 1 for warnings or 2 for errors
     // message // , line, column, nodeType
@@ -202,9 +140,11 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
       obj[type] = {
         failing: 0,
         warnings: 0,
-        errors: 0
+        errors: 0,
+        ruleIds: []
       };
     }
+    obj[type].ruleIds.push(ruleId);
     obj[type].failing++;
     switch (severity) {
     case 1:
@@ -217,8 +157,68 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     return obj;
   }, {});
 
+  // Todo: Merge with user's own map
+  // singlePane = false, // Whether to only create one template
+  //   (also using `lintingTypeTemplate`)
+  const lintingTypesWithMissing = lintingTypes.map((type) => {
+    const text = type.charAt().toUpperCase() + type.slice(1);
+    if (!lintingInfo[type]) {
+      lintingInfo[type] = {
+        failing: 0,
+        warnings: 0,
+        errors: 0,
+        ruleIds: []
+      };
+    }
+
+    const specialTemplate = (typ, templ) => {
+      const mapped = lintingInfo[typ].ruleIds.map((ruleId, i) => {
+        return template(templ, {
+          index: i + 1,
+          ruleId,
+          lintingType: type
+        });
+      });
+      if (mapped.length) {
+        // Get rid of objects now that data mapped
+        const set = lintingInfo[type];
+        set.clear();
+        mapped.forEach((item) => {
+          set.add(item);
+        });
+      }
+    };
+
+    switch (type) {
+    case 'missing':
+      specialTemplate(type, missingLintingTemplate);
+      break;
+    default:
+      break;
+    }
+
+    const ruleIdList = lintingInfo[type].ruleIds;
+    const lintingTypeCount = ruleIdList.length;
+    return [type, {text, lintingTypeCount, ruleIdList}];
+  });
+
+  filteredTypes = filteredTypes
+    ? filteredTypes.split(',')
+    : [];
+
+  let filteredLintingTypes = lintingTypesWithMissing;
+  const nonemptyPos = filteredTypes.indexOf('nonempty');
+  if (nonemptyPos > -1) {
+    filteredTypes.splice(nonemptyPos, 1);
+    filteredLintingTypes = filteredLintingTypes.filter((
+      [type, {lintingTypeCount}]
+    ) => {
+      return lintingTypeCount || filteredTypes.includes(type);
+    });
+  }
+
   const lintingTypesWithColors = filteredLintingTypes.map((
-    [type, {text, lintingTypeCount, lintingTypeList}]
+    [type, {text, lintingTypeCount, ruleIdList}]
   ) => {
     const glue = (lintingType, index) => {
       return template(lintingTypeTemplate, {
@@ -242,8 +242,8 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
         text,
         lintingTypeCount
       })}\n${lintingTypeCount
-        ? lintingTypeList.sort().map((lintingType, i) => {
-          return glue(lintingType, i + 1);
+        ? ruleIdList.sort().map((ruleId, i) => {
+          return glue(ruleId, i + 1);
         }).join('')
         : ''
       }`,
