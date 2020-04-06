@@ -177,6 +177,20 @@ module.exports = async (results, {rulesMeta}) => {
     })
   );
 
+  // Note: These messages are not in a consistent order
+  const usedTypesToCount = aggregatedMessages.reduce((obj, {
+    ruleId
+    // severity, // 1 for warnings or 2 for errors
+    // message // , line, column, nodeType
+  }) => {
+    const type = rulesToType[ruleId]; // e.g., "layout"
+    if (!obj[type]) {
+      obj[type] = 0;
+    }
+    obj[type]++;
+    return obj;
+  }, {});
+
   const lintingTypesWithColors = filteredLintingTypes.map((
     [type, {text, lintingTypeCount, lintingTypeList}]
   ) => {
@@ -206,14 +220,6 @@ module.exports = async (results, {rulesMeta}) => {
       }`,
       ...color
     ];
-  });
-
-  aggregatedMessages.forEach(({
-    ruleId,
-    severity, // 1 for warnings or 2 for errors
-    message // , line, column, nodeType
-  }, i) => {
-    const type = rulesToType[ruleId]; // e.g., "layout"
   });
 
   if (typeof textColor === 'string') {
