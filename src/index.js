@@ -10,6 +10,7 @@ const {resolve} = require('path');
 const badgeUp = require('badge-up').v2;
 const template = require('es6-template-strings');
 
+const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 
 const defaultTextColor = ['navy'];
@@ -60,7 +61,8 @@ module.exports = async (results, {rulesMeta}) => {
     failingColor = 'red',
     mediumColor = 'CCCC00', // dark yellow
     passingColor = 'green',
-    singlePane = false, // Whether to only create one template (also using `lintingTypeTemplate`)
+    // Whether to only create one template (also using `lintingTypeTemplate`)
+    singlePane = false,
     mediumThresholds, // "suggestion=30;layout=40" or just "40"
     passingThresholds, // "suggestion=75;layout=90" or just "80"
     /* eslint-disable no-template-curly-in-string */
@@ -76,6 +78,18 @@ module.exports = async (results, {rulesMeta}) => {
     textColor = defaultTextColor,
     filteredTypes = null
   } = options;
+
+  const rulesMetaEntries = Object.entries(rulesMeta);
+  const total = rulesMetaEntries.length;
+
+  const rulesToType = rulesMetaEntries.reduce((obj, [ruleId, {
+    type
+    // Might also use destructure `docs` and then use:
+    //   const {category} = docs || {}; // "Possible Errors"
+  }]) => {
+    obj[ruleId] = type;
+    return obj;
+  }, {});
 
   let lintingInfo; // Todo: Get
 
@@ -138,30 +152,30 @@ module.exports = async (results, {rulesMeta}) => {
     });
   }
 
-  // We need to get at eslint config so as to:
-  //  1. Find total number of rules in use (not just failing rules)
-  //  2. Get at rule meta-data (to determine rule type)
-
-  // We should also get at source of *all* linted files (e.g., while `source`
-  //   of reported `files could let us get at line count, it would only be
-  //   for reported files and not indicating whole size of project being
-  //   successfully linted)
-
   // Unlike other reporters, unlikely to need to report on each file
   //  separately (i.e., to make a separate badge for each file)
   const aggregatedMessages = [];
   let aggregatedErrorCount = 0;
   let aggregatedWarningCount = 0;
-  results.forEach(({
-    messages,
-    filePath,
-    errorCount, warningCount
-  }) => {
-    aggregatedMessages.push(...messages);
-    // ruleId, severity; message
-    aggregatedErrorCount += errorCount;
-    aggregatedWarningCount += warningCount;
-  });
+  let aggregatedLineCount = 0;
+  await Promise.all(
+    results.map(async ({
+      messages,
+      filePath,
+      errorCount,
+      warningCount,
+      source
+    }) => {
+      aggregatedMessages.push(...messages);
+      // ruleId, severity; message
+      aggregatedErrorCount += errorCount;
+      aggregatedWarningCount += warningCount;
+      if (!source) {
+        source = await readFile(filePath, 'utf8');
+      }
+      aggregatedLineCount += source.split('\n').length;
+    })
+  );
 
   const lintingTypesWithColors = filteredLintingTypes.map((
     [type, {text, lintingTypeCount, lintingTypeList}]
@@ -197,15 +211,16 @@ module.exports = async (results, {rulesMeta}) => {
   results.forEach(({
     messages,
     filePath, // Use for config
-    errorCount, warningCount
-    // , source, output
+    errorCount,
+    warningCount
+    // , output
   }) => {
     messages.forEach(({
       ruleId,
       severity, // 1 for warnings or 2 for errors
       message // , line, column, nodeType
     }, i) => {
-
+      const type = rulesToType[ruleId]; // e.g., "layout"
     });
   });
 
@@ -215,7 +230,10 @@ module.exports = async (results, {rulesMeta}) => {
   const sections = [
     [template(mainTemplate, {
       // lintingTypeCount: usedLintingTypes.length
-      total
+      total,
+      errorTotal: aggregatedErrorCount,
+      warningTotal: aggregatedWarningCount,
+      lineTotal: aggregatedLineCount
     }), ...textColor],
     ...lintingTypesWithColors
   ];

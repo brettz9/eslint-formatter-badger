@@ -19,6 +19,7 @@ module.exports = {
   },
   rules: {
     'import/no-commonjs': 0,
-    'no-process-exit': 0
+    'no-process-exit': 0,
+    'compat/compat': 0
   }
 };
