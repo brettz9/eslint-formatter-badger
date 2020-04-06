@@ -1,7 +1,6 @@
 'use strict';
 
-// Todo: Convert this for eslint-formatter-badger! Should use colors depending
-//   on failing thresholds instead
+// Todo: Add tests and coverage
 
 const fs = require('fs');
 const {promisify} = require('util');
@@ -12,8 +11,6 @@ const template = require('es6-template-strings');
 
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
-
-const defaultTextColor = ['navy'];
 
 const defaultLintingTypes = [
   'problem', 'suggestion', 'layout', 'missing'
@@ -58,6 +55,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     passingColor = 'green',
     // Whether to only create one template (also using `lintingTypeTemplate`)
     singlePane = false,
+    // Todo: Make separate thresholds for errors and warnings?
     mediumThreshold, // "80%" or "9"
     passingThreshold, // "95%" or "2"
     mediumThresholds, // "suggestion=30;layout=40" or just "40"
@@ -72,7 +70,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     throw new TypeError('Bad output path provided.');
   }
   let {
-    textColor = defaultTextColor,
+    textColor,
     filteredTypes = null
   } = options;
 
@@ -104,19 +102,69 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
       aggregatedLineCount += source.split('\n').length;
     })
   );
+  const aggregatedErrorsAndWarningsCount = aggregatedErrorCount +
+    aggregatedWarningCount;
+  const aggregatedErrorsAndWarningsPct =
+    aggregatedErrorsAndWarningsCount / total;
+
+  /**
+   * @param {string} color
+   * @param {string} threshold
+   * @param {string} thresholdColor
+   * @returns {string}
+   */
+  function checkThreshold (color, threshold, thresholdColor) {
+    if (!color && threshold) {
+      if (threshold.endsWith('%')) {
+        const thresh = Number.parseFloat(threshold.slice(0, -1));
+        if (thresh > aggregatedErrorsAndWarningsPct) {
+          color = thresholdColor;
+        }
+      } else {
+        const thresh = Number.parseFloat(threshold);
+        if (thresh > aggregatedErrorsAndWarningsCount) {
+          color = thresholdColor;
+        }
+      }
+    }
+    return color;
+  }
+
+  /**
+   * Gets the color per current counts and thresholds.
+   * @returns {string[]}
+  */
+  function getColorForCount () {
+    let color;
+    color = checkThreshold(color, passingThreshold, passingColor);
+    color = checkThreshold(color, mediumThreshold, mediumColor);
+    if (!color) {
+      color = failingColor;
+    }
+
+    return color;
+  }
 
   /**
    * @returns {void}
    */
   async function printBadge () {
     const sections = [
-      [template(mainTemplate, {
-        // failing?
-        total,
-        errorTotal: aggregatedErrorCount,
-        warningTotal: aggregatedWarningCount,
-        lineTotal: aggregatedLineCount
-      }), ...textColor],
+      [
+        template(
+          mainTemplate,
+          {
+            total,
+            errorTotal: aggregatedErrorCount,
+            warningTotal: aggregatedWarningCount,
+            errorWarningsTotal: aggregatedErrorsAndWarningsCount,
+            lineTotal: aggregatedLineCount,
+
+            errorWarningsPct: aggregatedErrorsAndWarningsPct
+          }
+        ),
+        ...(textColor || [getColorForCount()])
+      ],
       ...lintingTypesWithColors
     ];
 
@@ -277,13 +325,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
       });
     };
 
-    failingColor; // = 'red',
-    mediumColor; // = 'CCCC00', // dark yellow
-    passingColor; // = 'green',
-
-    // Todo: Make separate thresholds for errors and warnings?
-    mediumThreshold; // "80%" or "9"
-    passingThreshold; // "95%" or "2"
+    // Todo:
     mediumThresholds; // "suggestion=6;layout=10" or just "9"
     passingThresholds; // "suggestion=0;layout=1" or just "2"
 
@@ -291,14 +333,16 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
       `${template(lintingTypeTemplate, {
         text,
 
-        aggregatedErrorCount,
-        aggregatedWarningCount,
+        total,
+        errorTotal: aggregatedErrorCount,
+        warningTotal: aggregatedWarningCount,
+        errorWarningsTotal: aggregatedErrorsAndWarningsCount,
 
         failing,
         warnings,
         errors,
 
-        failingPct: failing / (aggregatedErrorCount + aggregatedWarningCount),
+        failingPct: failing / aggregatedErrorsAndWarningsCount,
         warningsPct: warnings / aggregatedWarningCount,
         errorsPct: errors / aggregatedErrorCount
       })}\n${failing
