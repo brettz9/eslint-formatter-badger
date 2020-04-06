@@ -62,7 +62,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     passingThresholds, // "suggestion=75;layout=90" or just "80"
     /* eslint-disable no-template-curly-in-string */
     mainTemplate = 'ESLint (${total} rules)',
-    lintingTypeTemplate = '${type}: ${typeTotal}',
+    lintingTypeTemplate = '${type}: ${failing}',
     missingLintingTemplate = '\n${index}. ${ruleId}'
     /* eslint-enable no-template-curly-in-string */
   } = options;
@@ -386,6 +386,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     return [
       `${template(lintingTypeTemplate, {
         text,
+        type,
 
         total,
         errorTotal: aggregatedErrorCount,
