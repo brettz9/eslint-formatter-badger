@@ -131,8 +131,14 @@ module.exports = async (results) => {
     });
   }
 
-  // We need to get at eslint config so as to find total number of rules,
-  //  and to get at rule meta-data
+  // We need to get at eslint config so as to:
+  //  1. Find total number of rules in use (not just failing rules)
+  //  2. Get at rule meta-data (to determine rule type)
+
+  // We should also get at source of *all* linted files (e.g., while `source`
+  //   of reported `files could let us get at line count, it would only be
+  //   for reported files and not indicating whole size of project being
+  //   successfully linted)
 
   // Unlike other reporters, unlikely to need to report on each file
   //  separately (i.e., to make a separate badge for each file)
