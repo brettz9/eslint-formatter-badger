@@ -14,7 +14,8 @@ const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 
 const defaultTextColor = ['navy'];
-const lintingTypes = [
+
+const defaultLintingTypes = [
   'problem', 'suggestion', 'layout', 'missing'
 ];
 
@@ -83,22 +84,30 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   const usedLintingTypes = new Set();
 
   // DEFINITIONS OF USER
-  const userRulesToType = ruleMap
+  const userRuleIdToType = ruleMap
     ? typeof ruleMap === 'string'
       // eslint-disable-next-line global-require, import/no-dynamic-require
       ? require(ruleMap)
       : ruleMap
     : {};
 
+  // ALL POSSIBLE TYPES PER USER+DEFAULTS OR JUST DEFAULTS
+  const lintingTypes = ruleMap
+    ? [...new Set([
+      ...defaultLintingTypes, ...Object.values(userRuleIdToType)
+    ])]
+    : defaultLintingTypes;
+
   // ALL RULES USED (passing or failing)
-  const rulesToType = rulesMetaEntries.reduce((obj, [ruleId, {
+  const ruleIdToType = rulesMetaEntries.reduce((obj, [ruleId, {
     type
     // Might also use destructure `docs` and then use:
     //   const {category} = docs || {}; // "Possible Errors"
   }]) => {
-    if (userRulesToType[ruleId]) {
-      type = userRulesToType[ruleId];
-    } else if (!type) {
+    if (userRuleIdToType[ruleId]) {
+      type = userRuleIdToType[ruleId];
+    }
+    if (!type) {
       type = 'missing';
     }
     usedLintingTypes.add(type);
@@ -139,7 +148,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     severity // 1 for warnings or 2 for errors
     // message // , line, column, nodeType
   }) => {
-    const type = rulesToType[ruleId]; // e.g., "layout"
+    const type = ruleIdToType[ruleId]; // e.g., "layout"
     if (!obj[type]) {
       obj[type] = {
         failing: 0,
@@ -161,7 +170,6 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     return obj;
   }, {});
 
-  // Todo: Merge with user's own map
   // singlePane = false, // Whether to only create one template
   //   (also using `lintingTypeTemplate`)
   const lintingTypesWithMissing = lintingTypes.map((type) => {
