@@ -277,15 +277,15 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
       });
     };
 
-    failingColor = 'red',
-    mediumColor = 'CCCC00', // dark yellow
-    passingColor = 'green',
+    failingColor; // = 'red',
+    mediumColor; // = 'CCCC00', // dark yellow
+    passingColor; // = 'green',
 
     // Todo: Make separate thresholds for errors and warnings?
-    mediumThreshold, // "80%" or "9"
-    passingThreshold, // "95%" or "2"
-    mediumThresholdByType, // "suggestion=6;layout=10" or just "9"
-    passingThresholdByType; // "suggestion=0;layout=1" or just "2"
+    mediumThreshold; // "80%" or "9"
+    passingThreshold; // "95%" or "2"
+    mediumThresholds; // "suggestion=6;layout=10" or just "9"
+    passingThresholds; // "suggestion=0;layout=1" or just "2"
 
     return [
       `${template(lintingTypeTemplate, {
