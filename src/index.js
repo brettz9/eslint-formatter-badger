@@ -61,7 +61,8 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     mediumThresholds, // "suggestion=30;layout=40" or just "40"
     passingThresholds, // "suggestion=75;layout=90" or just "80"
     /* eslint-disable no-template-curly-in-string */
-    mainTemplate = 'ESLint (${total} rules)',
+    // eslint-disable-next-line max-len
+    mainTemplate = 'ESLint (${total - errorWarningsTotal}/${total} rules passing)',
     lintingTypeTemplate = '${type}: ${failing}',
     missingLintingTemplate = '\n${index}. ${ruleId}'
     /* eslint-enable no-template-curly-in-string */
@@ -147,6 +148,8 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     return color;
   }
 
+  // eslint-disable-next-line prefer-const
+  let lintingTypesWithColors;
   /**
    * @returns {void}
    */
@@ -167,7 +170,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
         ),
         ...(textColor || [getColorForCount(mediumThreshold, passingThreshold)])
       ],
-      ...lintingTypesWithColors
+      ...(lintingTypesWithColors || [])
     ];
 
     if (logging === 'verbose') {
@@ -368,7 +371,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     return [color];
   }
 
-  const lintingTypesWithColors = filteredLintingTypes.map((
+  lintingTypesWithColors = filteredLintingTypes.map((
     [type, {
       text, ruleIds,
       failing, warnings, errors
