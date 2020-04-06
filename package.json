@@ -10,7 +10,7 @@
     "license-badges": "npm run license-badge && npm run license-badge-dev",
     "build-cli-svg": "clp --format=svg --config=src/optionDefinitions.js badges/cli.svg",
     "build-cli": "npm run build-cli-svg",
-    "eslint": "eslint --ext=js,md,html .",
+    "eslint": "eslint -f ./src/index.js --ext=js,md,html .",
     "cli": "./bin/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
