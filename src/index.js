@@ -1,5 +1,7 @@
 'use strict';
 
+// Info: https://eslint.org/docs/developer-guide/working-with-custom-formatters
+
 // Todo: Add tests and coverage
 
 const fs = require('fs');
