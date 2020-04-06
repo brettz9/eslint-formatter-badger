@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
+const eslint = require('eslint');
+
 const {join} = require('path');
 const {cliBasics} = require('command-line-basics');
 const mainScript = require('../src/index.js');
@@ -15,5 +17,6 @@ if (!optionDefinitions) { // cliBasics handled
 
 (async () => {
 // Use `optionDefinitions`
-await mainScript(optionDefinitions);
+// Todo: Built `results` from eslint
+await mainScript(results, {rulesMeta}, {packageJsonPath});
 })();

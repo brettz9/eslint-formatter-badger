@@ -40,16 +40,18 @@ const lintingTypes = [
 * @see https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
 */
 
-// eslint-disable-next-line import/no-dynamic-require
-const options = require(resolve(process.cwd(), './package.json'));
-
 /**
  * @param {ESLintResult[]} results
  * @param {PlainObject} data
  * @param {ESLintRulesMetaData} data.rulesMeta
  * @returns {Promise<void>}
  */
-module.exports = async (results, {rulesMeta}) => {
+module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
+  // eslint-disable-next-line import/no-dynamic-require, global-require
+  const options = require(
+    packageJsonPath || resolve(process.cwd(), './package.json')
+  );
+
   /**
    * @type {EslintFormatterBadgerOptions} options
    */
