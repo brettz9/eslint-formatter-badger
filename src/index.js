@@ -131,6 +131,25 @@ module.exports = async (results) => {
     });
   }
 
+  // We need to get at eslint config so as to find total number of rules,
+  //  and to get at rule meta-data
+
+  // Unlike other reporters, unlikely to need to report on each file
+  //  separately (i.e., to make a separate badge for each file)
+  const aggregatedMessages = [];
+  let aggregatedErrorCount = 0;
+  let aggregatedWarningCount = 0;
+  results.forEach(({
+    messages,
+    filePath,
+    errorCount, warningCount
+  }) => {
+    aggregatedMessages.push(...messages);
+    // ruleId, severity; message
+    aggregatedErrorCount += errorCount;
+    aggregatedWarningCount += warningCount;
+  });
+
   const lintingTypesWithColors = filteredLintingTypes.map((
     [type, {text, lintingTypeCount, lintingTypeList}]
   ) => {
@@ -170,8 +189,8 @@ module.exports = async (results) => {
   }) => {
     messages.forEach(({
       ruleId,
-      severity // 1 for warnings or 2 for errors
-      // , message, line, column, nodeType
+      severity, // 1 for warnings or 2 for errors
+      message // , line, column, nodeType
     }, i) => {
 
     });
