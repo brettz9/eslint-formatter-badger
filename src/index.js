@@ -91,7 +91,7 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
       : ruleMap
     : {};
 
-  // ALL POSSIBLE TYPES PER USER+DEFAULTS OR JUST DEFAULTS
+  // ALL POSSIBLE TYPES PER USER (if any) + DEFAULTS
   const lintingTypes = ruleMap
     ? [...new Set([
       ...defaultLintingTypes, ...Object.values(userRuleIdToType)
@@ -182,9 +182,15 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
         ruleIds: []
       };
     }
+    const {
+      failing = 0,
+      warnings = 0,
+      errors = 0,
+      ruleIds = []
+    } = lintingInfo[type];
 
     const specialTemplate = (typ, templ) => {
-      const mapped = lintingInfo[typ].ruleIds.map((ruleId, i) => {
+      const mapped = ruleIds.map((ruleId, i) => {
         return template(templ, {
           index: i + 1,
           ruleId,
@@ -209,9 +215,10 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
       break;
     }
 
-    const ruleIdList = lintingInfo[type].ruleIds;
-    const lintingTypeCount = ruleIdList.length;
-    return [type, {text, lintingTypeCount, ruleIdList}];
+    return [type, {
+      text, ruleIds,
+      failing, warnings, errors
+    }];
   });
 
   filteredTypes = filteredTypes
@@ -223,14 +230,17 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   if (nonemptyPos > -1) {
     filteredTypes.splice(nonemptyPos, 1);
     filteredLintingTypes = filteredLintingTypes.filter((
-      [type, {lintingTypeCount}]
+      [type, {failing}]
     ) => {
-      return lintingTypeCount || filteredTypes.includes(type);
+      return failing || filteredTypes.includes(type);
     });
   }
 
   const lintingTypesWithColors = filteredLintingTypes.map((
-    [type, {text, lintingTypeCount, ruleIdList}]
+    [type, {
+      text, ruleIds,
+      failing, warnings, errors
+    }]
   ) => {
     const glue = (lintingType, index) => {
       return template(lintingTypeTemplate, {
@@ -252,9 +262,19 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
     return [
       `${template(lintingTypeTemplate, {
         text,
-        lintingTypeCount
-      })}\n${lintingTypeCount
-        ? ruleIdList.sort().map((ruleId, i) => {
+
+        aggregatedErrorCount,
+        aggregatedWarningCount,
+
+        failing,
+        warnings,
+        errors,
+
+        failingPct: failing / (aggregatedErrorCount + aggregatedWarningCount),
+        warningsPct: warnings / aggregatedWarningCount,
+        errorsPct: errors / aggregatedErrorCount
+      })}\n${failing
+        ? ruleIds.sort().map((ruleId, i) => {
           return glue(ruleId, i + 1);
         }).join('')
         : ''
@@ -268,7 +288,8 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   }
   const sections = [
     [template(mainTemplate, {
-      // lintingTypeCount: usedLintingTypes.length
+      // failing:
+      //    usedLintingTypes.length ?
       total,
       errorTotal: aggregatedErrorCount,
       warningTotal: aggregatedWarningCount,
