@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 'use strict';
 
-const eslint = require('eslint');
-
 const {join} = require('path');
+
+const eslint = require('eslint');
 const {cliBasics} = require('command-line-basics');
 const mainScript = require('../src/index.js');
 

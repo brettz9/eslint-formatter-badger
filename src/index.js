@@ -2,8 +2,6 @@
 
 // Info: https://eslint.org/docs/developer-guide/working-with-custom-formatters
 
-// Todo: Add tests and coverage
-
 const fs = require('fs');
 const {promisify} = require('util');
 const {resolve} = require('path');
@@ -33,6 +31,9 @@ const defaultLintingTypes = [
  * @param {ESLintResult[]} results
  * @param {PlainObject} data
  * @param {ESLintRulesMetaData} data.rulesMeta
+ * @param {PlainObject} [opts]
+ * @param {string} [opts.packageJsonPath=
+ * resolve(process.cwd(), './package.json')]
  * @returns {Promise<void>}
  */
 module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
