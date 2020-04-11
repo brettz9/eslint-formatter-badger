@@ -81,9 +81,8 @@ const badger = exports.badger = async ({
     mediumThresholds, // "suggestion=30;layout=40" or just "40"
     passingThresholds, // "suggestion=75;layout=90" or just "80"
     /* eslint-disable no-template-curly-in-string */
-    // eslint-disable-next-line max-len
-    mainTemplate = 'ESLint (${total - errorWarningsTotal}/${total} rules passing)',
-    lintingTypeTemplate = '${type}: ${failing}',
+    mainTemplate = 'ESLint (${passing}/${total} rules passing)',
+    lintingTypeTemplate = '${lintingType}: ${failing}',
     missingLintingTemplate = '\n${index}. ${ruleId}'
     /* eslint-enable no-template-curly-in-string */
   } = opts;
@@ -180,6 +179,7 @@ const badger = exports.badger = async ({
           mainTemplate,
           {
             total,
+            passing: total - aggregatedErrorsAndWarningsCount,
             errorTotal: aggregatedErrorCount,
             warningTotal: aggregatedWarningCount,
             errorWarningsTotal: aggregatedErrorsAndWarningsCount,
@@ -412,6 +412,7 @@ const badger = exports.badger = async ({
         type,
 
         total,
+        passing: total - aggregatedErrorsAndWarningsCount,
         errorTotal: aggregatedErrorCount,
         warningTotal: aggregatedWarningCount,
         errorWarningsTotal: aggregatedErrorsAndWarningsCount,

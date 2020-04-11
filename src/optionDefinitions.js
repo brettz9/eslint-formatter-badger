@@ -69,6 +69,18 @@ const optionDefinitions = [
       '"security"). Empty by default.',
     typeLabel: '{underline path-to-map}'
   },
+  /*
+  failingColor = 'red',
+  mediumColor = 'CCCC00', // dark yellow
+  passingColor = 'green',
+  // Whether to only create one template (also using `lintingTypeTemplate`)
+  singlePane = false,
+  // Todo: Make separate thresholds for errors and warnings?
+  mediumThreshold, // "80%" or "9"
+  passingThreshold, // "95%" or "2"
+  mediumThresholds, // "suggestion=30;layout=40" or just "40"
+  passingThresholds, // "suggestion=75;layout=90" or just "80"
+   */
   {
     name: 'textColor', type: String,
     description: 'Color for "Linting" subject. Follow by comma for ' +
@@ -91,12 +103,33 @@ const optionDefinitions = [
     )
   },
   {
-    name: 'textTemplate', type: String,
+    name: 'mainTemplate', type: String,
     description: 'Template for text of lint badge; defaults to: ' +
-      '"Linting"; passed `problemCount`, `suggestionCount`, `layoutCount`, ' +
-      '`uncategorizedCount`; remember to escape `$` with backslash for ' +
+      getChalkTemplateSingleEscape(
+        // eslint-disable-next-line no-template-curly-in-string
+        'ESLint (${total - errorWarningsTotal}/${total} rules passing)'
+      ) +
+      '"Linting"; passed `total`, `passing`, `errorTotal`, `warningTotal`, ' +
+      '`errorWarningsTotal`, `lineTotal`, `errorWarningsPct`; ' +
+      'remember to escape `$` with backslash for ' +
       'CLI use.',
-    typeLabel: '{underline textTemplate}'
+    typeLabel: '{underline mainTemplate}'
+  },
+  {
+    name: 'lintingTypeTemplate',
+    description: 'Defaults to' +
+      getChalkTemplateSingleEscape(
+        // eslint-disable-next-line no-template-curly-in-string
+        '${type}: ${failing}'
+      )
+  },
+  {
+    name: 'missingLintingTemplate',
+    description: 'Defaults to ' +
+      getChalkTemplateSingleEscape(
+        // eslint-disable-next-line no-template-curly-in-string
+        '\n${index}. ${ruleId}'
+      )
   },
   {
     name: 'uncategorizedTemplate', type: String,
