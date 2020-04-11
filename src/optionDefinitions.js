@@ -101,7 +101,8 @@ const cliSections = [
   {
     // Add italics: `{italic textToItalicize}`
     content: pkg.description +
-      '\n\n{italic eslint-formatter-badger [outputPath]}'
+      '\n\n{italic eslint-formatter-badger --files file1.js ' +
+        '--files fileGlob* [outputPath]}'
   },
   {
     optionList: optionDefinitions
