@@ -36,7 +36,7 @@ const optionDefinitions = [
   {
     name: 'outputPath', type: String, defaultOption: true, alias: 'o',
     description: 'Path to which to save the file; defaults to ' +
-      '"lint-badge.svg" in the current working directory',
+      '"eslint-badge.svg" in the current working directory',
     typeLabel: '{underline outputPath}'
   },
   {
@@ -193,7 +193,7 @@ const optionDefinitions = [
     description: 'Defaults to' +
       getChalkTemplateSingleEscape(
         // eslint-disable-next-line no-template-curly-in-string
-        '"${type}: ${failing}";'
+        '"${lintingType}: ${failing}";'
       ) +
       'remember to escape `$` with backslash for CLI use.',
     typeLabel: '{underline lintingTypeTemplate}'

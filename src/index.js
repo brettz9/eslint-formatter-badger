@@ -34,13 +34,24 @@ const defaultLintingTypes = [
 */
 
 /**
+ * @param {external:ESLintResult[]} results
+ * @param {PlainObject} data
+ * @param {external:ESLintRulesMetaData} data.rulesMeta
+ * @param {FormatterBadgerOptions} [options]
+ * @returns {Promise<void>}
+ */
+module.exports = (results, {rulesMeta}, {packageJsonPath} = {}) => {
+  return badger({results, rulesMeta, options: {packageJsonPath}});
+};
+
+/**
  * @param {PlainObject} cfg
- * @param {ESLintResult[]} cfg.results
- * @param {ESLintRulesMetaData} cfg.rulesMeta
+ * @param {external:ESLintResult[]} cfg.results
+ * @param {external:ESLintRulesMetaData} cfg.rulesMeta
  * @param {FormatterBadgerOptions} [cfg.options]
  * @returns {Promise<void>}
  */
-const badger = exports.badger = async ({
+const badger = module.exports.badger = async ({
   results, rulesMeta, options = {}
 } = {}) => {
   const {packageJsonPath, configPath, noConfig} = options;
@@ -60,7 +71,19 @@ const badger = exports.badger = async ({
       ).eslintFormatterBadgerOptions || options;
 
   /**
-   * @type {EslintFormatterBadgerOptions} options
+  * @external EslintFormatterBadgerRuleMap
+  * @see https://eslint.org/docs/developer-guide/nodejs-api#cliengine-getrules
+  */
+
+  /**
+  * @typedef {PlainObject} EslintFormatterBadgerRuleMapOptions
+  * @property {external:RuleMap|external:EslintFormatterBadgerRuleMap} ruleMap
+  */
+
+  /**
+   * Note that this should really be an intersection of the types.
+   * @type {EslintFormatterBadgerOptions|
+   * EslintFormatterBadgerRuleMapOptions} options
    */
   const {
     // Path to module returning or JSON of custom map between
@@ -96,7 +119,15 @@ const badger = exports.badger = async ({
     filteredTypes = null
   } = opts;
 
-  const rulesMetaEntries = Object.entries(rulesMeta);
+  const rulesMetaEntries =
+    {}.toString.call(rulesMeta) === '[object Map]'
+      ? [...rulesMeta.entries()].map(([ruleId, {meta}]) => {
+        // Slightly different format between:
+        // 1. The `data` argument per: https://eslint.org/docs/developer-guide/working-with-custom-formatters
+        // 2. `cli.getRules()` per: https://eslint.org/docs/developer-guide/nodejs-api#cliengine-getrules
+        return [ruleId, meta];
+      })
+      : Object.entries(rulesMeta);
   const total = rulesMetaEntries.length;
 
   // Unlike other reporters, unlikely to need to report on each file
@@ -124,6 +155,8 @@ const badger = exports.badger = async ({
       aggregatedLineCount += source.split('\n').length;
     })
   );
+  console.log('aggregatedErrorCount + aggregatedWarningCount', aggregatedErrorCount,
+      aggregatedWarningCount, aggregatedErrorCount + aggregatedWarningCount);
   const aggregatedErrorsAndWarningsCount = aggregatedErrorCount +
     aggregatedWarningCount;
   const aggregatedErrorsAndWarningsPct =
@@ -224,11 +257,12 @@ const badger = exports.badger = async ({
     : {};
 
   // ALL RULES USED (passing or failing)
-  const ruleIdToType = rulesMetaEntries.reduce((obj, [ruleId, {
-    type
-    // Might also use destructure `docs` and then use:
-    //   const {category} = docs || {}; // "Possible Errors"
-  }]) => {
+  const ruleIdToType = rulesMetaEntries.reduce((obj, [ruleId, info]) => {
+    let {
+      type
+      // Might also destructure `docs` and then use:
+      //   const {category} = docs || {}; // "Possible Errors"
+    } = info || {};
     if (userRuleIdToType[ruleId]) {
       type = userRuleIdToType[ruleId];
     }
@@ -372,7 +406,7 @@ const badger = exports.badger = async ({
    */
   function getThresholdForRangeAndType (type, range) {
     let thresh;
-    if (thresholdContainer[range] !== null) {
+    if (thresholdContainer[range]) {
       if (typeof thresholdContainer[range] === 'string') {
         thresh = thresholdContainer[range];
       } else {
@@ -394,7 +428,7 @@ const badger = exports.badger = async ({
   }
 
   lintingTypesWithColors = filteredLintingTypes.map((
-    [type, {
+    [lintingType, {
       text, ruleIds,
       failing, warnings, errors
     }]
@@ -411,18 +445,18 @@ const badger = exports.badger = async ({
       color = lintingTypeColor.map((lintingTypeClr) => {
         return lintingTypeClr.split(',');
       }).find(([typ]) => {
-        return type === typ;
+        return lintingType === typ;
       });
       color = color && color[1];
     }
     if (!color) {
-      color = getColorForThresholds(type);
+      color = getColorForThresholds(lintingType);
     }
 
     return [
       `${template(lintingTypeTemplate, {
         text,
-        type,
+        lintingType,
 
         total,
         passing: total - aggregatedErrorsAndWarningsCount,
@@ -448,15 +482,4 @@ const badger = exports.badger = async ({
   });
 
   await printBadge();
-};
-
-/**
- * @param {ESLintResult[]} results
- * @param {PlainObject} data
- * @param {ESLintRulesMetaData} data.rulesMeta
- * @param {FormatterBadgerOptions} [options]
- * @returns {Promise<void>}
- */
-module.exports = (results, {rulesMeta}, {packageJsonPath} = {}) => {
-  return badger({results, rulesMeta, options: {packageJsonPath}});
 };
