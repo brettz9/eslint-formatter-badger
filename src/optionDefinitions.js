@@ -81,7 +81,7 @@ const optionDefinitions = [
     )
   },
   /*
-  // Todo: Add these and make use of `lintingTypeColor` in API!
+  // Todo: Add these
   failingColor = 'red',
   mediumColor = 'CCCC00', // dark yellow
   passingColor = 'green',
@@ -98,7 +98,8 @@ const optionDefinitions = [
     multiple: true,
     description: 'Key-value set for mapping a linting type name to color. ' +
       'Reuse for different types. Follow by comma for additional (e.g., to ' +
-      'add a stroke color). Defaults to not being used.',
+      'add a stroke color). Defaults to not being used and colors being ' +
+      'determined by pass-fail colors and thresholds.',
     typeLabel: getBracketedChalkTemplateEscape(
       'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
         'ffffff|Hex stroke as s{ffffff})'

@@ -84,7 +84,8 @@ const badger = exports.badger = async ({
     mainTemplate = 'ESLint (${passing}/${total} rules passing)',
     lintingTypeTemplate = '${lintingType}: ${failing}',
     missingLintingTemplate = '\n${index}. ${ruleId}',
-    failingTemplate = ''
+    failingTemplate = null,
+    lintingTypeColor = null
     /* eslint-enable no-template-curly-in-string */
   } = opts;
   if (!outputPath || typeof outputPath !== 'string') {
@@ -405,7 +406,18 @@ const badger = exports.badger = async ({
       });
     };
 
-    const color = getColorForThresholds(type);
+    let color;
+    if (lintingTypeColor) {
+      color = lintingTypeColor.map((lintingTypeClr) => {
+        return lintingTypeClr.split(',');
+      }).find(([typ]) => {
+        return type === typ;
+      });
+      color = color && color[1];
+    }
+    if (!color) {
+      color = getColorForThresholds(type);
+    }
 
     return [
       `${template(lintingTypeTemplate, {
