@@ -3,7 +3,7 @@
 
 const {join} = require('path');
 
-const eslint = require('eslint');
+const {CLIEngine} = require('eslint');
 const {cliBasics} = require('command-line-basics');
 const {badger} = require('../src/index.js');
 
@@ -16,7 +16,13 @@ if (!optionDefinitions) { // cliBasics handled
 }
 
 (async () => {
-// Use `optionDefinitions`
-// Todo: Built `results` from eslint
-await badger({results, rulesMeta, options: {packageJsonPath}});
+const cli = new CLIEngine({
+  useEslintrc: true // `true` `is default
+});
+
+const {results} = cli.executeOnFiles(optionDefinitions.files);
+
+await badger({results, rulesMeta, options: {
+  packageJsonPath: optionDefinitions.packageJsonPath
+}});
 })();

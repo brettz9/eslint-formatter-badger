@@ -28,6 +28,11 @@ const getBracketedChalkTemplateEscape = (s) => {
 
 const optionDefinitions = [
   {
+    name: 'files', type: String, multiple: true,
+    description: 'Repeat for each file or file glob you wish to be linted.',
+    typeLabel: '{underline file path}'
+  },
+  {
     name: 'outputPath', type: String, defaultOption: true, alias: 'o',
     description: 'Path to which to save the file; default to ' +
       '"lint-badge.svg" in the current working directory',
