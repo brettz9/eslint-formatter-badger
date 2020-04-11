@@ -29,7 +29,8 @@ const getBracketedChalkTemplateEscape = (s) => {
 const optionDefinitions = [
   {
     name: 'files', type: String, multiple: true,
-    description: 'Repeat for each file or file glob you wish to be linted.',
+    description: 'Repeat for each file or file glob you wish to be linted. ' +
+      'Required.',
     typeLabel: '{underline file path}'
   },
   {
@@ -97,7 +98,7 @@ const optionDefinitions = [
     multiple: true,
     description: 'Key-value set for mapping a linting type name to color. ' +
       'Reuse for different types. Follow by comma for additional (e.g., to ' +
-      'add a stroke color). Defaults to not being used',
+      'add a stroke color). Defaults to not being used.',
     typeLabel: getBracketedChalkTemplateEscape(
       'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
         'ffffff|Hex stroke as s{ffffff})'
@@ -108,9 +109,9 @@ const optionDefinitions = [
     description: 'Template for text of lint badge; defaults to: ' +
       getChalkTemplateSingleEscape(
         // eslint-disable-next-line no-template-curly-in-string
-        'ESLint (${passing}/${total} rules passing)'
+        '"ESLint (${passing}/${total} rules passing)";'
       ) +
-      '"Linting"; passed `total`, `passing`, `errorTotal`, `warningTotal`, ' +
+      'passed `total`, `passing`, `errorTotal`, `warningTotal`, ' +
       '`errorWarningsTotal`, `lineTotal`, `errorWarningsPct`; ' +
       'remember to escape `$` with backslash for ' +
       'CLI use.',
