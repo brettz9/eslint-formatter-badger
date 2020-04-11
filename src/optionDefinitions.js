@@ -34,15 +34,31 @@ const optionDefinitions = [
   },
   {
     name: 'outputPath', type: String, defaultOption: true, alias: 'o',
-    description: 'Path to which to save the file; default to ' +
+    description: 'Path to which to save the file; defaults to ' +
       '"lint-badge.svg" in the current working directory',
     typeLabel: '{underline outputPath}'
+  },
+  {
+    name: 'configPath', type: String,
+    description: 'Path to config file for options. Lower priority than ' +
+      'other CLI options. Defaults to non-use.',
+    typeLabel: '{underline path to config file}'
+  },
+  {
+    name: 'packageJsonPath', type: String,
+    description: 'Path to `package.json` for discovery of its ' +
+      '`eslintFormatterBadgerOptions` property. In non-`formatter-badger` ' +
+      'CLI use, i.e., `eslint -f .`, this defaults to checking ' +
+      '`process.cwd()`, but here will default to not checking for a ' +
+      '`package.json` and just using the regular CLI options. Ignored ' +
+      'if `configPath` is set.',
+    typeLabel: '{underline path to package.json}'
   },
   {
     name: 'filteredTypes', type: String, alias: 'f',
     description: 'Comma-separated list of specific linting types to display ' +
       'and/or "nonempty"; defaults to no filter; can be one of ' +
-      '"problem"|"suggestion"|"layout"|"uncategorized"',
+      '"problem"|"suggestion"|"layout"|"uncategorized".',
     typeLabel: '{underline list of "nonempty" or value}'
   },
   {
@@ -50,13 +66,14 @@ const optionDefinitions = [
     description: 'Path to module which returns an object map of ESLint ' +
       'rule IDs to type (whether from the built-in `meta.type`\'s, ' +
       '"problem", "suggestion", or "layout", or a custom type, e.g.,' +
-      '"security")',
+      '"security"). Empty by default.',
     typeLabel: '{underline path-to-map}'
   },
   {
     name: 'textColor', type: String,
     description: 'Color for "Linting" subject. Follow by comma for ' +
-      'additional (e.g., to add a stroke color)',
+      'additional (e.g., to add a stroke color). Defaults to determining ' +
+      'color by threshold instead.',
     typeLabel: getBracketedChalkTemplateEscape(
       'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
         'ffffff|Hex stroke as s{ffffff})'
@@ -67,7 +84,7 @@ const optionDefinitions = [
     multiple: true,
     description: 'Key-value set for mapping a linting type name to color. ' +
       'Reuse for different types. Follow by comma for additional (e.g., to ' +
-      'add a stroke color)',
+      'add a stroke color).',
     typeLabel: getBracketedChalkTemplateEscape(
       'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
         'ffffff|Hex stroke as s{ffffff})'
@@ -77,7 +94,8 @@ const optionDefinitions = [
     name: 'textTemplate', type: String,
     description: 'Template for text of lint badge; defaults to: ' +
       '"Linting"; passed `problemCount`, `suggestionCount`, `layoutCount`, ' +
-      '`uncategorizedCount`; remember to escape `$` with backslash for CLI use',
+      '`uncategorizedCount`; remember to escape `$` with backslash for ' +
+      'CLI use.',
     typeLabel: '{underline textTemplate}'
   },
   {
@@ -87,7 +105,7 @@ const optionDefinitions = [
         // eslint-disable-next-line no-template-curly-in-string
         'to: "\n${index}. ${ruleId}"; passed `ruleId` and `index` (1-based); '
       ) +
-      'remember to escape `$` with backslash for CLI use',
+      'remember to escape `$` with backslash for CLI use.',
     typeLabel: '{underline uncategorizedTemplate}'
   },
   {

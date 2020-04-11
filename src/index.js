@@ -41,12 +41,23 @@ const defaultLintingTypes = [
  * @returns {Promise<void>}
  */
 const badger = exports.badger = async ({
-  results, rulesMeta, options: {packageJsonPath} = {}
+  results, rulesMeta, options = {}
 } = {}) => {
-  // eslint-disable-next-line import/no-dynamic-require, global-require
-  const options = require(
-    packageJsonPath || resolve(process.cwd(), './package.json')
-  ).eslintFormatterBadgerOptions || {};
+  const {packageJsonPath, configPath, noConfig} = options;
+
+  // The `noConfig` allows our CLI to set this when neither `configPath`
+  //   nor `packageJsonPath` is set, but we otherwise default to the
+  //   `package.json` in the current working directory since otherwise,
+  //    `eslint -f .`-style calls will have no way to get at options.
+  const opts = noConfig
+    ? options
+    : configPath
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      ? require(configPath)
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      : require(
+        packageJsonPath || resolve(process.cwd(), './package.json')
+      ).eslintFormatterBadgerOptions || options;
 
   /**
    * @type {EslintFormatterBadgerOptions} options
@@ -75,14 +86,14 @@ const badger = exports.badger = async ({
     lintingTypeTemplate = '${type}: ${failing}',
     missingLintingTemplate = '\n${index}. ${ruleId}'
     /* eslint-enable no-template-curly-in-string */
-  } = options;
+  } = opts;
   if (!outputPath || typeof outputPath !== 'string') {
     throw new TypeError('Bad output path provided.');
   }
   let {
     textColor,
     filteredTypes = null
-  } = options;
+  } = opts;
 
   const rulesMetaEntries = Object.entries(rulesMeta);
   const total = rulesMetaEntries.length;

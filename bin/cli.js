@@ -23,6 +23,7 @@ const cli = new CLIEngine({
 const {results} = cli.executeOnFiles(optionDefinitions.files);
 
 await badger({results, rulesMeta, options: {
+  noConfig: !optionDefinitions.packageJsonPath && !optionDefinitions.configPath,
   packageJsonPath: optionDefinitions.packageJsonPath
 }});
 })();
