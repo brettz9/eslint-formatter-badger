@@ -80,6 +80,7 @@ const optionDefinitions = [
     )
   },
   /*
+  // Todo: Add these and make use of `lintingTypeColor` in API!
   failingColor = 'red',
   mediumColor = 'CCCC00', // dark yellow
   passingColor = 'green',
