@@ -210,7 +210,7 @@ const badger = exports.badger = async ({
     textColor = textColor.split(',');
   }
 
-  if (!singlePane) {
+  if (singlePane) {
     await printBadge();
     return;
   }

@@ -72,7 +72,7 @@ const optionDefinitions = [
   },
   {
     name: 'textColor', type: String,
-    description: 'Color for "Linting" subject. Follow by comma for ' +
+    description: 'Color for `mainTemplate` subject. Follow by comma for ' +
       'additional (e.g., to add a stroke color). Defaults to determining ' +
       'color by threshold instead.',
     typeLabel: getBracketedChalkTemplateEscape(
@@ -80,14 +80,42 @@ const optionDefinitions = [
         'ffffff|Hex stroke as s{ffffff})'
     )
   },
+  {
+    name: 'failingColor', type: String,
+    description: 'Color used when failing a threshold. Follow by comma for ' +
+      'additional (e.g., to add a stroke color). Defaults to "red".',
+    typeLabel: getBracketedChalkTemplateEscape(
+      'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
+        'ffffff|Hex stroke as s{ffffff})'
+    )
+  },
+  {
+    name: 'mediumColor', type: String,
+    description: 'Color used when reaching the medium level of a threshold. ' +
+      'Follow by comma for additional (e.g., to add a stroke color). ' +
+      'Defaults to "CCCC00" (a dark yellow).',
+    typeLabel: getBracketedChalkTemplateEscape(
+      'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
+        'ffffff|Hex stroke as s{ffffff})'
+    )
+  },
+  {
+    name: 'passingColor', type: String,
+    description: 'Color used when passing a threshold. Follow by comma for ' +
+      'additional (e.g., to add a stroke color). Defaults to "green".',
+    typeLabel: getBracketedChalkTemplateEscape(
+      'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
+        'ffffff|Hex stroke as s{ffffff})'
+    )
+  },
+  {
+    name: 'singlePane', type: Boolean,
+    description: 'Whether to only create one block of the badge and not ' +
+      'for each linting type. Defaults to `false`.'
+  },
   /*
   // Todo: Add these
-  failingColor = 'red',
-  mediumColor = 'CCCC00', // dark yellow
-  passingColor = 'green',
-  // Whether to only create one template (also using `lintingTypeTemplate`)
-  singlePane = false,
-  // Todo: Make separate thresholds for errors and warnings?
+  // Not separate thresholds for errors and warnings
   mediumThreshold, // "80%" or "9"
   passingThreshold, // "95%" or "2"
   mediumThresholds, // "suggestion=30;layout=40" or just "40"
