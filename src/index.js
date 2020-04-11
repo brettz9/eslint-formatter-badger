@@ -27,16 +27,9 @@ const defaultLintingTypes = [
 * @see https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
 */
 
-/**
- * @param {ESLintResult[]} results
- * @param {PlainObject} data
- * @param {ESLintRulesMetaData} data.rulesMeta
- * @param {PlainObject} [opts]
- * @param {string} [opts.packageJsonPath=
- * resolve(process.cwd(), './package.json')]
- * @returns {Promise<void>}
- */
-module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
+const badger = exports.badger = async ({
+  results, rulesMeta, options: {packageJsonPath}
+}) => {
   // eslint-disable-next-line import/no-dynamic-require, global-require
   const options = require(
     packageJsonPath || resolve(process.cwd(), './package.json')
@@ -417,4 +410,17 @@ module.exports = async (results, {rulesMeta}, {packageJsonPath} = {}) => {
   });
 
   await printBadge();
+};
+
+/**
+ * @param {ESLintResult[]} results
+ * @param {PlainObject} data
+ * @param {ESLintRulesMetaData} data.rulesMeta
+ * @param {PlainObject} [opts]
+ * @param {string} [opts.packageJsonPath=
+ * resolve(process.cwd(), './package.json')]
+ * @returns {Promise<void>}
+ */
+module.exports = (results, {rulesMeta}, {packageJsonPath} = {}) => {
+  return badger({results, rulesMeta, options: {packageJsonPath}});
 };
