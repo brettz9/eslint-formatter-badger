@@ -76,10 +76,10 @@ const badger = exports.badger = async ({
     // Whether to only create one template (also using `lintingTypeTemplate`)
     singlePane = false,
     // Todo: Make separate thresholds for errors and warnings?
-    mediumThreshold, // "80%" or "9"
-    passingThreshold, // "95%" or "2"
-    mediumThresholds, // "suggestion=30;layout=40" or just "40"
-    passingThresholds, // "suggestion=75;layout=90" or just "80"
+    mediumThreshold = '', // "80%" or "9"
+    passingThreshold = '100%', // "95%" or "2"
+    mediumThresholds = '', // "suggestion=30,layout=40" or just "40"
+    passingThresholds = '100%', // "suggestion=75,layout=90" or just "80"
     /* eslint-disable no-template-curly-in-string */
     mainTemplate = 'ESLint (${passing}/${total} rules passing)',
     lintingTypeTemplate = '${lintingType}: ${failing}',
@@ -350,7 +350,7 @@ const badger = exports.badger = async ({
    * @returns {void}
    */
   const parseThreshold = (range, thresholds) => {
-    const typeThresholds = thresholds.split(';');
+    const typeThresholds = thresholds.split(',');
     if (typeThresholds.length === 1) {
       thresholdContainer[range] = typeThresholds[0];
       return;

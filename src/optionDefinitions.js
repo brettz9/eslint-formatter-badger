@@ -113,14 +113,56 @@ const optionDefinitions = [
     description: 'Whether to only create one block of the badge and not ' +
       'for each linting type. Defaults to `false`.'
   },
-  /*
-  // Todo: Add these
-  // Not separate thresholds for errors and warnings
-  mediumThreshold, // "80%" or "9"
-  passingThreshold, // "95%" or "2"
-  mediumThresholds, // "suggestion=30;layout=40" or just "40"
-  passingThresholds, // "suggestion=75;layout=90" or just "80"
- */
+  {
+    name: 'passingThreshold', type: String,
+    description: 'Threshold at which, a result will use ' +
+      'the `passingColor` (instead of `mediumColor` or `failingColor`). ' +
+      'If set to a number, will be checked against the total of errors ' +
+      'and warnings. If set to a percent, will be checked to the percent ' +
+      'of errors and warnings relative to the total results. Defaults to ' +
+      '100%. See `passingThresholds` for per-type thresholds.',
+    typeLabel: '{underline number or percent}'
+  },
+  {
+    name: 'mediumThreshold', type: String,
+    description: 'Threshold at which, a non-passing result will use ' +
+      'the `mediumColor` (instead of `failingColor`). If set to a ' +
+      'number, will be checked against the total of errors and warnings. ' +
+      'If set to a percent, will be checked to the percent of errors and ' +
+      'warnings relative to the total results. Defaults to no threshold ' +
+      'being checked. See `mediumThresholds` for per-type thresholds.',
+    typeLabel: '{underline number or percent}'
+  },
+  {
+    name: 'passingThresholds', type: String,
+    description: 'Indicates thresholds for individual type panels. Set to ' +
+      'a single number or percent (to apply to all types) or to a map of ' +
+      'types to thresholds at which, a result will use ' +
+      'the `passingColor` (instead of `mediumColor` or `failingColor`). ' +
+      'Comma-separated list of <key>=<value> pairs where the key ' +
+      'is a linting type (e.g., "suggestion") and the value is a number ' +
+      'or percent.' +
+      'If set to a number, will be checked against the total of errors ' +
+      'and warnings. If set to a percent, will be checked to the percent ' +
+      'of errors and warnings relative to the total results. Defaults to ' +
+      '100%. See `passingThreshold` for the threshold applying to the ' +
+      'aggregate panel.',
+    typeLabel: '{underline number or percent}'
+  },
+  {
+    name: 'mediumThresholds', type: String,
+    description: 'Indicates thresholds for individual type panels. Set to ' +
+      'a single number or percent (to apply to all types) or to a map of ' +
+      'types to thresholds at which, a result will use the `mediumColor` ' +
+      '(instead of `failingColor`). Comma-separated list of <key>=<value> ' +
+      'pairs where the key is a linting type (e.g., "suggestion") and the ' +
+      'value is a number or percent. If set to a number, will be checked ' +
+      'against the total of errors and warnings. If set to a percent, will ' +
+      'be checked to the percent of errors and warnings relative to the ' +
+      'total results. Defaults to 100%. See `mediumThreshold` for the ' +
+      'threshold applying to the aggregate panel.',
+    typeLabel: '{underline number or percent}'
+  },
   {
     name: 'lintingTypeColor', type: String,
     multiple: true,
@@ -153,14 +195,16 @@ const optionDefinitions = [
         // eslint-disable-next-line no-template-curly-in-string
         '"${type}: ${failing}";'
       ) +
-      'remember to escape `$` with backslash for CLI use.'
+      'remember to escape `$` with backslash for CLI use.',
+    typeLabel: '{underline lintingTypeTemplate}'
   },
   {
     name: 'failingTemplate',
     description: 'If present, should be an ES6-template-as-string and will ' +
       'be passed `ruleId` and `index` (1-based) for each failing rule ID. ' +
       'Defaults to not being used. Remember to escape `$` with backslash ' +
-      'for CLI use.'
+      'for CLI use.',
+    typeLabel: '{underline failingTemplate}'
   },
   {
     name: 'missingLintingTemplate',
@@ -170,7 +214,8 @@ const optionDefinitions = [
         // eslint-disable-next-line no-template-curly-in-string
         '"\n${index}. ${ruleId}". '
       ) +
-      'Remember to escape `$` with backslash for CLI use.'
+      'Remember to escape `$` with backslash for CLI use.',
+    typeLabel: '{underline missingLintingTemplate}'
   },
   {
     name: 'logging', type: String,
