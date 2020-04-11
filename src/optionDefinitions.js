@@ -69,6 +69,16 @@ const optionDefinitions = [
       '"security"). Empty by default.',
     typeLabel: '{underline path-to-map}'
   },
+  {
+    name: 'textColor', type: String,
+    description: 'Color for "Linting" subject. Follow by comma for ' +
+      'additional (e.g., to add a stroke color). Defaults to determining ' +
+      'color by threshold instead.',
+    typeLabel: getBracketedChalkTemplateEscape(
+      'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
+        'ffffff|Hex stroke as s{ffffff})'
+    )
+  },
   /*
   failingColor = 'red',
   mediumColor = 'CCCC00', // dark yellow
@@ -80,23 +90,13 @@ const optionDefinitions = [
   passingThreshold, // "95%" or "2"
   mediumThresholds, // "suggestion=30;layout=40" or just "40"
   passingThresholds, // "suggestion=75;layout=90" or just "80"
-   */
-  {
-    name: 'textColor', type: String,
-    description: 'Color for "Linting" subject. Follow by comma for ' +
-      'additional (e.g., to add a stroke color). Defaults to determining ' +
-      'color by threshold instead.',
-    typeLabel: getBracketedChalkTemplateEscape(
-      'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
-        'ffffff|Hex stroke as s{ffffff})'
-    )
-  },
+ */
   {
     name: 'lintingTypeColor', type: String,
     multiple: true,
     description: 'Key-value set for mapping a linting type name to color. ' +
       'Reuse for different types. Follow by comma for additional (e.g., to ' +
-      'add a stroke color).',
+      'add a stroke color). Defaults to not being used',
     typeLabel: getBracketedChalkTemplateEscape(
       'underline <typeName>=<color> (<color>: CSS-Color|Hex as: ' +
         'ffffff|Hex stroke as s{ffffff})'
@@ -107,7 +107,7 @@ const optionDefinitions = [
     description: 'Template for text of lint badge; defaults to: ' +
       getChalkTemplateSingleEscape(
         // eslint-disable-next-line no-template-curly-in-string
-        'ESLint (${total - errorWarningsTotal}/${total} rules passing)'
+        'ESLint (${passing}/${total} rules passing)'
       ) +
       '"Linting"; passed `total`, `passing`, `errorTotal`, `warningTotal`, ' +
       '`errorWarningsTotal`, `lineTotal`, `errorWarningsPct`; ' +
@@ -120,26 +120,26 @@ const optionDefinitions = [
     description: 'Defaults to' +
       getChalkTemplateSingleEscape(
         // eslint-disable-next-line no-template-curly-in-string
-        '${type}: ${failing}'
-      )
+        '"${type}: ${failing}";'
+      ) +
+      'remember to escape `$` with backslash for CLI use.'
+  },
+  {
+    name: 'failingTemplate',
+    description: 'If present, should be an ES6-template-as-string and will ' +
+      'be passed `ruleId` and `index` (1-based) for each failing rule ID. ' +
+      'Defaults to not being used. Remember to escape `$` with backslash ' +
+      'for CLI use.'
   },
   {
     name: 'missingLintingTemplate',
-    description: 'Defaults to ' +
+    description: 'ES6-template-as-string passed `ruleId` and `index` ' +
+      '(1-based) for each rule ID that is missing. Defaults to ' +
       getChalkTemplateSingleEscape(
         // eslint-disable-next-line no-template-curly-in-string
-        '\n${index}. ${ruleId}'
-      )
-  },
-  {
-    name: 'uncategorizedTemplate', type: String,
-    description: 'Template for listing uncategorized rule names; defaults ' +
-      getChalkTemplateSingleEscape(
-        // eslint-disable-next-line no-template-curly-in-string
-        'to: "\n${index}. ${ruleId}"; passed `ruleId` and `index` (1-based); '
+        '"\n${index}. ${ruleId}". '
       ) +
-      'remember to escape `$` with backslash for CLI use.',
-    typeLabel: '{underline uncategorizedTemplate}'
+      'Remember to escape `$` with backslash for CLI use.'
   },
   {
     name: 'logging', type: String,

@@ -83,7 +83,8 @@ const badger = exports.badger = async ({
     /* eslint-disable no-template-curly-in-string */
     mainTemplate = 'ESLint (${passing}/${total} rules passing)',
     lintingTypeTemplate = '${lintingType}: ${failing}',
-    missingLintingTemplate = '\n${index}. ${ruleId}'
+    missingLintingTemplate = '\n${index}. ${ruleId}',
+    failingTemplate = ''
     /* eslint-enable no-template-curly-in-string */
   } = opts;
   if (!outputPath || typeof outputPath !== 'string') {
@@ -397,9 +398,9 @@ const badger = exports.badger = async ({
       failing, warnings, errors
     }]
   ) => {
-    const glue = (lintingType, index) => {
-      return template(lintingTypeTemplate, {
-        lintingType,
+    const glue = (ruleId, index) => {
+      return template(failingTemplate, {
+        ruleId,
         index
       });
     };
@@ -424,7 +425,7 @@ const badger = exports.badger = async ({
         failingPct: failing / aggregatedErrorsAndWarningsCount,
         warningsPct: warnings / aggregatedWarningCount,
         errorsPct: errors / aggregatedErrorCount
-      })}\n${failing
+      })}\n${failing && failingTemplate
         ? ruleIds.sort().map((ruleId, i) => {
           return glue(ruleId, i + 1);
         }).join('')
