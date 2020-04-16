@@ -39,9 +39,11 @@ results.map(({filePath}) => {
 });
 */
 
-await badger({results, rulesMeta, options: {
+await badger({
+  results,
+  rulesMeta,
   ...optionDefinitions,
   noConfig: !optionDefinitions.packageJsonPath && !optionDefinitions.configPath,
   packageJsonPath: optionDefinitions.packageJsonPath
-}});
+});
 })();

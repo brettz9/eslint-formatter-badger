@@ -161,10 +161,6 @@ const badger = module.exports.badger = async ({
       aggregatedLineCount += source.split('\n').length;
     })
   );
-  // eslint-disable-next-line no-console
-  console.log('aggregatedErrorCount + aggregatedWarningCount',
-    aggregatedErrorCount,
-    aggregatedWarningCount, aggregatedErrorCount + aggregatedWarningCount);
   const aggregatedErrorsAndWarningsCount = aggregatedErrorCount +
     aggregatedWarningCount;
   const aggregatedErrorsAndWarningsPct =
