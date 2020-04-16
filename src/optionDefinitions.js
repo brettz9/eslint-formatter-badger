@@ -28,7 +28,7 @@ const getBracketedChalkTemplateEscape = (s) => {
 
 const optionDefinitions = [
   {
-    name: 'files', type: String, multiple: true,
+    name: 'file', type: String, multiple: true,
     description: 'Repeat for each file or file glob you wish to be linted. ' +
       'Required.',
     typeLabel: '{underline file path}'
@@ -228,8 +228,8 @@ const cliSections = [
   {
     // Add italics: `{italic textToItalicize}`
     content: pkg.description +
-      '\n\n{italic eslint-formatter-badger --files file1.js ' +
-        '--files fileGlob* [outputPath]}'
+      '\n\n{italic eslint-formatter-badger --file file1.js ' +
+        '--file fileGlob* [outputPath]}'
   },
   {
     optionList: optionDefinitions

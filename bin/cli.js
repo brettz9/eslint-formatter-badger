@@ -15,9 +15,9 @@ if (!optionDefinitions) { // cliBasics handled
   process.exit();
 }
 
-if (!optionDefinitions.files) {
+if (!optionDefinitions.file) {
   throw new Error(
-    'The `files` argument is required (or use `--help` or `--version`).'
+    'The `file` argument is required (or use `--help` or `--version`).'
   );
 }
 
@@ -26,7 +26,7 @@ const cli = new CLIEngine({
   useEslintrc: true // `true` `is default
 });
 
-const {results} = cli.executeOnFiles(optionDefinitions.files);
+const {results} = cli.executeOnFiles(optionDefinitions.file);
 // console.log('results', results);
 
 const rulesMeta = cli.getRules();

@@ -118,6 +118,13 @@ const badger = module.exports.badger = async ({
     filteredTypes = null
   } = opts;
 
+  const log = (...msgs) => {
+    if (logging === 'verbose') {
+      // eslint-disable-next-line no-console
+      console.log(...msgs);
+    }
+  };
+
   const rulesMetaEntries =
     {}.toString.call(rulesMeta) === '[object Map]'
       ? [...rulesMeta.entries()].map(([ruleId, {meta}]) => {
@@ -229,15 +236,13 @@ const badger = module.exports.badger = async ({
       ...(lintingTypesWithColors || [])
     ];
 
-    if (logging === 'verbose') {
-      // eslint-disable-next-line no-console
-      console.log(
-        'Using linting', lintingInfo, '\nprinting sections:\n', sections
-      );
-    }
+    log(
+      'Using linting', lintingInfo, '\nprinting sections:\n', sections
+    );
 
     const svg = await badgeUp(sections);
     await writeFile(outputPath, svg);
+    log(`Finished writing to ${outputPath}`);
   }
 
   if (typeof textColor === 'string') {
