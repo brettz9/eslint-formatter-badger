@@ -15,8 +15,9 @@
     "eslint-formatted": "eslint -f ./src/index.js --ext=js,md,html .",
     "eslint": "eslint --ext=js,md,html .",
     "mocha": "mocha --require esm --require chai/register-expect test/** --reporter-options configFile=mocha-multi-reporters.json",
+    "nyc": "nyc --all npm run mocha",
     "test": "npm run eslint && npm run mocha",
-    "test-cov": "rm -rf node_modules/.cache && npm run eslint && nyc --all npm run mocha && npm run coverage-badge"
+    "test-cov": "rm -rf node_modules/.cache && npm run eslint && npm run nyc && npm run coverage-badge"
   },
   "bin": {
     "eslint-formatter-badger": "./bin/cli.js"
