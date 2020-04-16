@@ -17,7 +17,7 @@ const getResultsPath = (path) => {
   return join(__dirname, `results/${path}`);
 };
 const outputPath = getResultsPath('cli-results.svg');
-const cliSimplePath = getFixturePath('cliSimplePath.svg');
+const cliSimplePath = getFixturePath('cliSimple-no-ignore.svg');
 
 describe('Binary', function () {
   this.timeout(8000);
@@ -25,6 +25,13 @@ describe('Binary', function () {
     const {stdout} = await execFile(binFile, ['-h']);
     expect(stdout).to.contain(
       'Create badges'
+    );
+  });
+
+  it('should err without `file` (or help/version) flag', async function () {
+    const {stderr} = await execFile(binFile, []);
+    expect(stderr).to.contain(
+      'The `file` argument is required (or use `--help` or `--version`).'
     );
   });
 
@@ -44,6 +51,8 @@ describe('Binary', function () {
         [
           '--file', 'test/fixtures/sample.js',
           '--logging', 'verbose',
+          '--noUseEslintIgnore',
+          '--noUseEslintrc',
           outputPath
         ],
         {

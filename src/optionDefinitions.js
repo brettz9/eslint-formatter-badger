@@ -34,6 +34,16 @@ const optionDefinitions = [
     typeLabel: '{underline file path}'
   },
   {
+    name: 'noUseEslintrc', type: Boolean,
+    description: 'Whether to use an .eslintrc files. Corresponds to ' +
+      'inverse of ESLint\'s option of the same name.'
+  },
+  {
+    name: 'noUseEslintIgnore', type: Boolean,
+    description: 'Whether to use ignore files; corresponds to ' +
+      'inverse of ESLint\'s `ignore`.'
+  },
+  {
     name: 'outputPath', type: String, defaultOption: true, alias: 'o',
     description: 'Path to which to save the file; defaults to ' +
       '"eslint-badge.svg" in the current working directory',

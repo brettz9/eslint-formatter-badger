@@ -15,18 +15,29 @@ if (!optionDefinitions) { // cliBasics handled
   process.exit();
 }
 
-if (!optionDefinitions.file) {
-  throw new Error(
+const {
+  file,
+  noUseEslintIgnore = false,
+  noUseEslintrc = false,
+  packageJsonPath,
+  configPath
+} = optionDefinitions;
+
+if (!file) {
+  // eslint-disable-next-line no-console
+  console.error(
     'The `file` argument is required (or use `--help` or `--version`).'
   );
+  process.exit();
 }
 
 (async () => {
 const cli = new CLIEngine({
-  useEslintrc: true // `true` `is default
+  ignore: !noUseEslintIgnore, // `true` `is ESLint default
+  useEslintrc: !noUseEslintrc // `true` `is ESLint default
 });
 
-const {results} = cli.executeOnFiles(optionDefinitions.file);
+const {results} = cli.executeOnFiles(file);
 // console.log('results', results);
 
 const rulesMeta = cli.getRules();
@@ -43,7 +54,7 @@ await badger({
   results,
   rulesMeta,
   ...optionDefinitions,
-  noConfig: !optionDefinitions.packageJsonPath && !optionDefinitions.configPath,
-  packageJsonPath: optionDefinitions.packageJsonPath
+  noConfig: !packageJsonPath && !configPath,
+  packageJsonPath
 });
 })();
