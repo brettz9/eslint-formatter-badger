@@ -9,6 +9,28 @@ module.exports = {
     browser: false,
     es6: true
   },
+  overrides: [
+    {
+      files: 'test/**',
+      globals: {
+        expect: 'readonly'
+      },
+      env: {
+        mocha: true
+      }
+    },
+    {
+      files: 'test/programmatic.js',
+      parserOptions: {
+        sourceType: 'module'
+      },
+      rules: {
+        'node/no-unsupported-features/es-syntax': ['error', {
+          ignores: ['modules']
+        }]
+      }
+    }
+  ],
   settings: {
     polyfills: [
     ]

@@ -12,11 +12,11 @@
     "build-cli": "npm run build-cli-svg",
     "cli": "./bin/cli.js",
     "coverage-badge": "coveradge badges/coverage-badge.svg",
-    "eslint": "eslint -f ./src/index.js --ext=js,md,html .",
+    "eslint-formatted": "eslint -f ./src/index.js --ext=js,md,html .",
+    "eslint": "eslint --ext=js,md,html .",
     "mocha": "mocha --require esm --require chai/register-expect test/** --reporter-options configFile=mocha-multi-reporters.json",
-    "rollup": "rollup -c",
-    "test": "npm run eslint && npm run rollup && npm run mocha",
-    "test-cov": "rm -rf node_modules/.cache && npm run eslint && npm run rollup && nyc --all npm run mocha && npm run coverage-badge"
+    "test": "npm run eslint && npm run mocha",
+    "test-cov": "rm -rf node_modules/.cache && npm run eslint && nyc --all npm run mocha && npm run coverage-badge"
   },
   "bin": {
     "eslint-formatter-badger": "./bin/cli.js"

@@ -1,7 +1,7 @@
 import {readFile as rf, unlink as ul} from 'fs';
 import {promisify} from 'util';
 import {join} from 'path';
-import {filesizeBadger} from '../src/index.js';
+import {badger as filesizeBadger} from '../src/index.js';
 
 const logging = 'verbose';
 

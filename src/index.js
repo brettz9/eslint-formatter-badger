@@ -45,14 +45,13 @@ module.exports = (results, {rulesMeta}, {packageJsonPath} = {}) => {
 };
 
 /**
- * @param {PlainObject} cfg
+ * @param {FormatterBadgerOptions} cfg
  * @param {external:ESLintResult[]} cfg.results
  * @param {external:ESLintRulesMetaData} cfg.rulesMeta
- * @param {FormatterBadgerOptions} [cfg.options]
  * @returns {Promise<void>}
  */
 const badger = module.exports.badger = async ({
-  results, rulesMeta, options = {}
+  results, rulesMeta, ...options
 } = {}) => {
   const {packageJsonPath, configPath, noConfig} = options;
 
@@ -155,8 +154,10 @@ const badger = module.exports.badger = async ({
       aggregatedLineCount += source.split('\n').length;
     })
   );
-  console.log('aggregatedErrorCount + aggregatedWarningCount', aggregatedErrorCount,
-      aggregatedWarningCount, aggregatedErrorCount + aggregatedWarningCount);
+  // eslint-disable-next-line no-console
+  console.log('aggregatedErrorCount + aggregatedWarningCount',
+    aggregatedErrorCount,
+    aggregatedWarningCount, aggregatedErrorCount + aggregatedWarningCount);
   const aggregatedErrorsAndWarningsCount = aggregatedErrorCount +
     aggregatedWarningCount;
   const aggregatedErrorsAndWarningsPct =
