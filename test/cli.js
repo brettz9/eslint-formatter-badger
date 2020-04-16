@@ -17,7 +17,7 @@ const getResultsPath = (path) => {
   return join(__dirname, `results/${path}`);
 };
 const outputPath = getResultsPath('cli-results.svg');
-const cliSimplePath = getFixturePath('cliSimple-no-ignore.svg');
+const cliOneFailingSuggestion = getFixturePath('cli-1-failing-suggestion.svg');
 
 describe('Binary', function () {
   this.timeout(8000);
@@ -68,7 +68,7 @@ describe('Binary', function () {
       );
       expect(stderr).to.equal('');
       const contents = await readFile(outputPath, 'utf8');
-      const expected = await readFile(cliSimplePath, 'utf8');
+      const expected = await readFile(cliOneFailingSuggestion, 'utf8');
       expect(contents).to.equal(expected);
     });
   });
