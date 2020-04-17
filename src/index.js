@@ -458,9 +458,10 @@ const badger = module.exports.badger = async ({
     let color;
     if (lintingTypeColor) {
       color = lintingTypeColor.map((lintingTypeClr) => {
-        return lintingTypeClr.split(',');
-      }).find(([typ]) => {
-        return lintingType === typ;
+        const [type, clr] = lintingTypeClr.split('=');
+        return [type, clr.split(',')];
+      }).find(([type]) => {
+        return lintingType === type;
       });
       color = color && color[1];
     }
