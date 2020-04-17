@@ -378,13 +378,16 @@ const badger = module.exports.badger = async ({
     : [];
 
   let filteredLintingTypes = lintingTypesWithMissing;
-  const nonemptyPos = filteredTypes.indexOf('nonempty');
-  if (nonemptyPos > -1) {
-    filteredTypes.splice(nonemptyPos, 1);
+  if (filteredTypes.length) {
+    const nonemptyPos = filteredTypes.indexOf('nonempty');
+    const checkNonempty = nonemptyPos > -1;
+    if (checkNonempty) {
+      filteredTypes.splice(nonemptyPos, 1);
+    }
     filteredLintingTypes = filteredLintingTypes.filter((
       [type, {failing}]
     ) => {
-      return failing || filteredTypes.includes(type);
+      return (checkNonempty && failing) || filteredTypes.includes(type);
     });
   }
 

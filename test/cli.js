@@ -20,6 +20,12 @@ const getResultsPath = (path) => {
 };
 const outputPath = getResultsPath('cli-results.svg');
 const cliOneFailingSuggestion = getFixturePath('cli-1-failing-suggestion.svg');
+const cliOneFailingSuggestionFiltered = getFixturePath(
+  'cli-1-failing-suggestion-filtered.svg'
+);
+const cliOneFailingSuggestionNonempty = getFixturePath(
+  'cli-1-failing-suggestion-nonempty.svg'
+);
 const cliOneFailingSuggestionFailingThreshold = getFixturePath(
   'cli-1-failing-suggestion-failing-threshold.svg'
 );
@@ -87,6 +93,62 @@ describe('Binary', function () {
       expect(stderr).to.equal('');
       const contents = await readFile(outputPath, 'utf8');
       const expected = await readFile(cliOneFailingSuggestion, 'utf8');
+      expect(contents).to.equal(expected);
+    });
+
+    it('should execute main CLI (filteredTypes)', async function () {
+      const {stdout, stderr} = await execFile(
+        binFile,
+        [
+          '--filteredTypes', 'suggestion,problem',
+          '--file', 'test/fixtures/sample.js',
+          '--logging', 'verbose',
+          '--noUseEslintIgnore',
+          '--noUseEslintrc',
+          outputPath
+        ],
+        {
+          timeout: 15000
+        }
+      );
+      if (stderr) {
+        // eslint-disable-next-line no-console
+        console.log('stderr', stderr);
+      }
+      expect(stdout).to.contain(
+        `Finished writing to ${outputPath}`
+      );
+      expect(stderr).to.equal('');
+      const contents = await readFile(outputPath, 'utf8');
+      const expected = await readFile(cliOneFailingSuggestionFiltered, 'utf8');
+      expect(contents).to.equal(expected);
+    });
+
+    it('should execute main CLI (nonempty filteredTypes)', async function () {
+      const {stdout, stderr} = await execFile(
+        binFile,
+        [
+          '--filteredTypes', 'nonempty',
+          '--file', 'test/fixtures/sample.js',
+          '--logging', 'verbose',
+          '--noUseEslintIgnore',
+          '--noUseEslintrc',
+          outputPath
+        ],
+        {
+          timeout: 15000
+        }
+      );
+      if (stderr) {
+        // eslint-disable-next-line no-console
+        console.log('stderr', stderr);
+      }
+      expect(stdout).to.contain(
+        `Finished writing to ${outputPath}`
+      );
+      expect(stderr).to.equal('');
+      const contents = await readFile(outputPath, 'utf8');
+      const expected = await readFile(cliOneFailingSuggestionNonempty, 'utf8');
       expect(contents).to.equal(expected);
     });
 
