@@ -15,7 +15,7 @@
     "coverage-badge": "coveradge badges/coverage-badge.svg",
     "eslint-formatted": "eslint -f ./src/index.js --ext=js,md,html .",
     "eslint": "eslint --ext=js,md,html .",
-    "mocha": "mocha --require esm --require chai/register-expect test/*.js --reporter-options configFile=mocha-multi-reporters.json",
+    "mocha": "mocha test/*.js",
     "nyc": "nyc --all npm run mocha",
     "test": "npm run eslint && npm run mocha",
     "test-cov": "rm -rf node_modules/.cache && npm run eslint && npm run nyc && npm run coverage-badge"
@@ -87,8 +87,8 @@
     "esm": "^3.2.25",
     "license-badger": "^0.12.7",
     "mocha": "^7.1.1",
-    "mocha-badge-generator": "^0.5.2",
-    "mocha-multi-reporters": "^1.1.7",
+    "mocha-badge-generator": "git+https://github.com/brettz9/mocha-badge-generator.git#thresholds",
+    "mocha-multi-reporters": "git+https://github.com/brettz9/mocha-multi-reporters.git#promise-waiting",
     "nyc": "^15.0.1",
     "open-cli": "^6.0.1",
     "typescript": "^3.8.3"
