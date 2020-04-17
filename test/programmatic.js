@@ -41,6 +41,9 @@ const outputPath = getResultsPath('results.svg');
 const eslintBadgeFixturePath = getFixturePath('eslint-badge.svg');
 const mainEslintBadgeFixturePath = getFixturePath('main-eslint-badge.svg');
 const oneFailingSuggestion = getFixturePath('1-failing-suggestion.svg');
+const oneFailingSuggestionWithLines = getFixturePath(
+  '1-failing-suggestion-with-lines.svg'
+);
 
 describe('`badger`', function () {
   this.timeout(15000);
@@ -64,7 +67,7 @@ describe('`badger`', function () {
     before(unlinker);
     after(unlinker);
 
-    describe('Main badger export (`eslint -f`)', function () {
+    describe('Main badger export (API for `eslint -f`)', function () {
       it('should return default badger export results', async function () {
         // This doesn't return a Promise (to avoid printing
         //   `Promise { <pending> }`), so we have to try at a timeout
@@ -256,6 +259,23 @@ describe('`badger`', function () {
       });
       const contents = await readFile(outputPath, 'utf8');
       const expected = await readFile(oneFailingSuggestion, 'utf8');
+      expect(contents).to.equal(expected);
+    });
+
+    it('should auto-set missing `source` in results', async function () {
+      await badger({
+        results: [{
+          ...noConsoleResults[0],
+          source: undefined
+        }],
+        // eslint-disable-next-line no-template-curly-in-string
+        mainTemplate: '${passing}/${total}; lineTotal: ${lineTotal}',
+        rulesMeta: consoleRulesMeta,
+        configPath: getFixturePath('config.js'),
+        outputPath
+      });
+      const contents = await readFile(outputPath, 'utf8');
+      const expected = await readFile(oneFailingSuggestionWithLines, 'utf8');
       expect(contents).to.equal(expected);
     });
   });

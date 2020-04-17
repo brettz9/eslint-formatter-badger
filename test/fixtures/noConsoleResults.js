@@ -1,7 +1,9 @@
 'use strict';
+const {join} = require('path');
+
 module.exports = [
   {
-    filePath: '/Users/brett/eslint-formatter-badger/test/fixtures/sample.js',
+    filePath: join(__dirname, '/sample.js'),
     messages: [
       {
         ruleId: 'no-console',

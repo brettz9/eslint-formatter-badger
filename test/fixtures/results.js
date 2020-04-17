@@ -1,6 +1,8 @@
+import {join} from 'path';
+
 export default [
   {
-    filePath: '/Users/brett/eslint-formatter-badger/test/fixtures/simple.js',
+    filePath: join(__dirname, 'simple.js'),
     messages: [
       {
         ruleId: 'curly',
