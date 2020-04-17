@@ -8,8 +8,10 @@ import delay from 'delay';
 import {badger, badgerEngine, default as mainBadger} from '../src/index.js';
 import rulesMeta from './fixtures/rulesMeta.js';
 import simpleRulesMeta from './fixtures/simpleRulesMeta.js';
+import consoleRulesMeta from './fixtures/consoleRulesMeta.js';
 import simpleResults from './fixtures/simpleResults.js';
 import results from './fixtures/results.js';
+import noConsoleResults from './fixtures/noConsoleResults.js';
 
 chai.use(chaiAsPromised);
 
@@ -29,6 +31,7 @@ const eslintBadgePath = join(__dirname, '../eslint-badge.svg');
 const outputPath = getResultsPath('results.svg');
 const eslintBadgeFixturePath = getFixturePath('eslint-badge.svg');
 const mainEslintBadgeFixturePath = getFixturePath('main-eslint-badge.svg');
+const oneFailingSuggestion = getFixturePath('1-failing-suggestion.svg');
 
 describe('`badger`', function () {
   this.timeout(15000);
@@ -115,6 +118,18 @@ describe('`badger`', function () {
         Error,
         'A rule in the results, `curly`, was not found in `rulesMeta`'
       );
+    });
+
+    it('should execute with `configPath` (as in CLI)', async function () {
+      await badger({
+        results: noConsoleResults,
+        rulesMeta: consoleRulesMeta,
+        configPath: getFixturePath('config.js'),
+        outputPath
+      });
+      const contents = await readFile(outputPath, 'utf8');
+      const expected = await readFile(oneFailingSuggestion, 'utf8');
+      expect(contents).to.equal(expected);
     });
   });
 });

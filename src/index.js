@@ -64,11 +64,14 @@ const badger = module.exports.badger = async ({
     ? options
     : configPath
       // eslint-disable-next-line import/no-dynamic-require, global-require
-      ? require(configPath)
-      // eslint-disable-next-line import/no-dynamic-require, global-require
-      : require(
-        packageJsonPath || resolve(process.cwd(), './package.json')
-      ).eslintFormatterBadgerOptions || options;
+      ? {...require(configPath), ...options}
+      : {
+        // eslint-disable-next-line import/no-dynamic-require, global-require
+        ...require(
+          packageJsonPath || resolve(process.cwd(), './package.json')
+        ).eslintFormatterBadgerOptions,
+        ...options
+      };
 
   /**
   * @external EslintFormatterBadgerRuleMap
@@ -144,6 +147,7 @@ const badger = module.exports.badger = async ({
   let aggregatedWarningCount = 0;
   // Includes both passing and failing files
   let aggregatedLineCount = 0;
+
   await Promise.all(
     results.map(async ({
       messages,
@@ -162,6 +166,7 @@ const badger = module.exports.badger = async ({
       aggregatedLineCount += source.split('\n').length;
     })
   );
+
   const aggregatedErrorsAndWarningsCount = aggregatedErrorCount +
     aggregatedWarningCount;
   const aggregatedErrorsAndWarningsPct =
@@ -544,7 +549,11 @@ module.exports.badgerEngine = async (cfg) => {
   // console.log('results', results);
 
   const rulesMeta = cli.getRules();
-  // console.log('rulesMeta', rules.entries());
+  /*
+  console.error('rulesMeta', [...rulesMeta.entries()].filter(([ruleId]) => {
+    return ruleId === 'no-console'
+  })[0][1].meta.schema[0].properties.allow.items);
+  */
 
   /*
   results.map(({filePath}) => {
