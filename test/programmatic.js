@@ -24,8 +24,6 @@ const getResultsPath = (path) => {
 const eslintBadgePath = join(__dirname, '../eslint-badge.svg');
 const outputPath = getResultsPath('results.svg');
 const eslintBadgeFixturePath = getFixturePath('eslint-badge.svg');
-const textColorPath = getFixturePath('text-color.svg');
-const emptyTextTemplatePath = getFixturePath('emptyTextTemplatePath.svg');
 
 describe('`badger`', function () {
   this.timeout(15000);
@@ -88,31 +86,6 @@ describe('`badger`', function () {
         Error,
         'A rule in the results, `curly`, was not found in `rulesMeta`'
       );
-    });
-
-    it('should work with string text color', async function () {
-      await badger({
-        file: 'test/fixtures/sample.js',
-        outputPath,
-        textColor: 'orange,s{blue}',
-        logging
-      });
-      const contents = await readFile(outputPath, 'utf8');
-      const expected = await readFile(textColorPath, 'utf8');
-      expect(contents).to.equal(expected);
-    });
-
-    it('should work with empty `textTemplate`', async function () {
-      await badger({
-        file: 'test/fixtures/sample.js',
-        textTemplate: '',
-        outputPath,
-        textColor: 'orange,s{blue}',
-        logging
-      });
-      const contents = await readFile(outputPath, 'utf8');
-      const expected = await readFile(emptyTextTemplatePath, 'utf8');
-      expect(contents).to.equal(expected);
     });
   });
 });
