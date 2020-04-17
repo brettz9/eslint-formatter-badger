@@ -22,7 +22,10 @@ module.exports = {
     {
       files: 'test/programmatic.js',
       extends: [
-        'plugin:@fintechstudios/eslint-plugin-chai-as-promised/recommended'
+        'plugin:@fintechstudios/eslint-plugin-chai-as-promised/recommended',
+        'plugin:chai-expect-keywords/recommended',
+        'plugin:chai-expect/recommended',
+        'plugin:chai-friendly/recommended'
       ],
       parserOptions: {
         sourceType: 'module'
@@ -30,7 +33,13 @@ module.exports = {
       rules: {
         'node/no-unsupported-features/es-syntax': ['error', {
           ignores: ['modules']
-        }]
+        }],
+        'chai-expect-keywords/no-unsupported-keywords': [
+          'error', {
+            // allowChaiDOM: true,
+            allowChaiAsPromised: true
+          }
+        ]
       }
     }
   ],

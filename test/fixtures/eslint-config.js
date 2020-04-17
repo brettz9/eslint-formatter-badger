@@ -6,6 +6,6 @@ module.exports = {
   },
   rules: {
     curly: ['error'],
-    'no-process-exit': ['error']
+    'no-process-exit': ['warn']
   }
 };

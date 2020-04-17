@@ -49,6 +49,34 @@ describe('`badger`', function () {
     before(unlinker);
     after(unlinker);
 
+    describe('`badgerEngine`', function () {
+      it('should return `badgerEngine` results', async function () {
+        const {
+          results,
+          rulesMeta: returnedRulesMeta
+        } = await badgerEngine({
+          noUseEslintrc: true,
+          noUseEslintIgnore: true,
+          eslintConfigPath: getFixturePath('eslint-config.js'),
+          // Using file contents from https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
+          //   though triggering a warning for one rule instead
+          file: 'test/fixtures/simple.js',
+          textColor: 'orange,s{blue}',
+          logging
+        });
+        const contents = await readFile(eslintBadgePath, 'utf8');
+        const expected = await readFile(eslintBadgeFixturePath, 'utf8');
+        expect(contents).to.equal(expected);
+        expect([...returnedRulesMeta.entries()].some(([ruleId]) => {
+          return ruleId === 'curly';
+        })).to.be.true;
+
+        expect(results[0].filePath).to.contain('test/fixtures/simple.js');
+        expect(results[0].errorCount).to.equal(1);
+        expect(results[0].warningCount).to.equal(1);
+      });
+    });
+
     it('should throw with results not matching `rulesMeta`', function () {
       return expect(badger({
         file: 'test/fixtures/sample.js',
@@ -60,22 +88,6 @@ describe('`badger`', function () {
         Error,
         'A rule in the results, `curly`, was not found in `rulesMeta`'
       );
-    });
-
-    it('should work with default output path', async function () {
-      await badgerEngine({
-        noUseEslintrc: true,
-        noUseEslintIgnore: true,
-        eslintConfigPath: getFixturePath('eslint-config.js'),
-        file: 'test/fixtures/simple.js',
-        textColor: 'orange,s{blue}',
-        logging,
-        rulesMeta,
-        results: simpleResults
-      });
-      const contents = await readFile(eslintBadgePath, 'utf8');
-      const expected = await readFile(eslintBadgeFixturePath, 'utf8');
-      expect(contents).to.equal(expected);
     });
 
     it('should work with string text color', async function () {

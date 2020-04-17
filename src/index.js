@@ -493,8 +493,14 @@ const badger = module.exports.badger = async ({
 };
 
 /**
+* @typedef {PlainObject} BadgerEngineResults
+* @property {external:ESLintResult[]} results
+* @property {external:ESLintRulesMetaData} rulesMeta
+*/
+
+/**
  * @param {FormatterBadgerOptions} cfg
- * @returns {Promise<void>}
+ * @returns {Promise<BadgerEngineResults>}
  */
 module.exports.badgerEngine = async (cfg) => {
   const {
@@ -532,4 +538,8 @@ module.exports.badgerEngine = async (cfg) => {
     noConfig: !packageJsonPath && !configPath,
     packageJsonPath
   });
+  return {
+    results,
+    rulesMeta
+  };
 };
