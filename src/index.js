@@ -208,7 +208,7 @@ const badger = module.exports.badger = async ({
   }
 
   // eslint-disable-next-line prefer-const
-  let lintingTypesWithColors;
+  let lintingTypesWithColors, lintingInfo;
   /**
    * @returns {void}
    */
@@ -234,7 +234,9 @@ const badger = module.exports.badger = async ({
     ];
 
     log(
-      'Using linting', lintingInfo, '\nprinting sections:\n', sections
+      'Using linting',
+      typeof lintingInfo === 'undefined' ? 'undefined' : lintingInfo,
+      '\nprinting sections:\n', sections
     );
 
     const svg = await badgeUp(sections);
@@ -278,7 +280,7 @@ const badger = module.exports.badger = async ({
 
   // FAILING TYPE COUNTS ONLY
   // Note: These messages are not in a consistent order
-  const lintingInfo = aggregatedMessages.reduce((obj, {
+  lintingInfo = aggregatedMessages.reduce((obj, {
     ruleId,
     severity // 1 for warnings or 2 for errors
     // message // , line, column, nodeType
