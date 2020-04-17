@@ -388,6 +388,8 @@ const badger = module.exports.badger = async ({
       [type, {failing}]
     ) => {
       return (checkNonempty && failing) || filteredTypes.includes(type);
+    }).sort(([typeA], [typeB]) => {
+      return filteredTypes.indexOf(typeA) > filteredTypes.indexOf(typeB);
     });
   }
 
