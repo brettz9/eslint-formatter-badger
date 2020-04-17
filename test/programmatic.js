@@ -1,7 +1,13 @@
 import {readFile as rf, unlink as ul} from 'fs';
 import {promisify} from 'util';
 import {join} from 'path';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import {badger} from '../src/index.js';
+import rulesMeta from './fixtures/rulesMeta.js';
+import simpleResults from './fixtures/simpleResults.js';
+
+chai.use(chaiAsPromised);
 
 const logging = 'verbose';
 
@@ -43,11 +49,26 @@ describe('`badger`', function () {
     before(unlinker);
     after(unlinker);
 
+    it('should throw with results not matching `rulesMeta`', function () {
+      return expect(badger({
+        file: 'test/fixtures/sample.js',
+        textColor: 'orange,s{blue}',
+        logging,
+        rulesMeta,
+        results: simpleResults
+      })).to.be.rejectedWith(
+        Error,
+        'A rule in the results, `curly`, was not found in `rulesMeta`'
+      );
+    });
+
     it('should work with default output path', async function () {
       await badger({
         file: 'test/fixtures/sample.js',
         textColor: 'orange,s{blue}',
-        logging
+        logging,
+        rulesMeta,
+        results: simpleResults
       });
       const contents = await readFile(eslintBadgePath, 'utf8');
       const expected = await readFile(eslintBadgeFixturePath, 'utf8');

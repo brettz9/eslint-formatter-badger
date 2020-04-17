@@ -21,6 +21,9 @@ module.exports = {
     },
     {
       files: 'test/programmatic.js',
+      extends: [
+        'plugin:@fintechstudios/eslint-plugin-chai-as-promised/recommended'
+      ],
       parserOptions: {
         sourceType: 'module'
       },

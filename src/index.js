@@ -283,6 +283,11 @@ const badger = module.exports.badger = async ({
     // message // , line, column, nodeType
   }) => {
     const type = ruleIdToType[ruleId]; // e.g., "layout"
+    if (!type) {
+      throw new Error(
+        `A rule in the results, \`${ruleId}\`, was not found in \`rulesMeta\``
+      );
+    }
     if (!obj[type]) {
       obj[type] = {
         failing: 0,
