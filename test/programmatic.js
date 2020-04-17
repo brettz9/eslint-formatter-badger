@@ -28,6 +28,12 @@ const getResultsPath = (path) => {
 };
 
 const eslintBadgePath = join(__dirname, '../eslint-badge.svg');
+const eslintBadgeWithTemplatesPath = getFixturePath(
+  'eslintBadgeWithTemplatesPath.svg'
+);
+const eslintBadgeWithFailingTemplatesPath = getFixturePath(
+  'eslintBadgeWithFailingTemplatesPath.svg'
+);
 const outputPath = getResultsPath('results.svg');
 const eslintBadgeFixturePath = getFixturePath('eslint-badge.svg');
 const mainEslintBadgeFixturePath = getFixturePath('main-eslint-badge.svg');
@@ -105,6 +111,87 @@ describe('`badger`', function () {
         expect(returnedResults[0].errorCount).to.equal(1);
         expect(returnedResults[0].warningCount).to.equal(1);
       });
+
+      it(
+        'should return `badgerEngine` results with templates',
+        async function () {
+          const {
+            results: returnedResults,
+            rulesMeta: returnedRulesMeta
+          } = await badgerEngine({
+            noUseEslintrc: true,
+            noUseEslintIgnore: true,
+            eslintConfigPath: getFixturePath('eslint-config.js'),
+            /* eslint-disable no-template-curly-in-string */
+            mainTemplate: 'total: ${total}; passing: ${passing};\n' +
+              'errorTotal: ${errorTotal}; warningTotal: ${warningTotal}; ' +
+              'errorWarningsTotal: ${errorWarningsTotal}; lineTotal: ' +
+              '${lineTotal};\nerrorWarningsPct: ${errorWarningsPct}',
+            lintingTypeTemplate: 'text: ${text}; lintingType: ' +
+              '${lintingType};\ntotal: ${total}; passing: ' +
+              '${passing};\nerrorTotal: ${errorTotal}; warningTotal: ' +
+              '${warningTotal};\nerrorWarningsTotal: ${errorWarningsTotal}; ' +
+              'failing: ${failing};\nwarnings: ${warnings}; errors: ' +
+              '${errors};\nfailingPct: ${failingPct}; warningsPct: ' +
+              '${warningsPct}; errorsPct: ${errorsPct}',
+            /* eslint-enable no-template-curly-in-string */
+            // Using file contents from https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
+            //   though triggering a warning for one rule instead
+            file: 'test/fixtures/simple.js',
+            textColor: 'orange,s{blue}',
+            outputPath,
+            logging
+          });
+          const contents = await readFile(outputPath, 'utf8');
+          const expected = await readFile(eslintBadgeWithTemplatesPath, 'utf8');
+          expect(contents).to.equal(expected);
+          expect([...returnedRulesMeta.entries()].some(([ruleId]) => {
+            return ruleId === 'curly';
+          })).to.be.true;
+          expect(returnedResults[0].filePath).to.contain(
+            'test/fixtures/simple.js'
+          );
+          expect(returnedResults[0].errorCount).to.equal(1);
+          expect(returnedResults[0].warningCount).to.equal(1);
+        }
+      );
+      it(
+        'should return `badgerEngine` results with `failingTemplate`',
+        async function () {
+          const {
+            results: returnedResults,
+            rulesMeta: returnedRulesMeta
+          } = await badgerEngine({
+            noUseEslintrc: true,
+            noUseEslintIgnore: true,
+            eslintConfigPath: getFixturePath('eslint-config.js'),
+            /* eslint-disable no-template-curly-in-string */
+            failingTemplate: '\nruleId: ${ruleId}; index: ${index}',
+            /* eslint-enable no-template-curly-in-string */
+            // Using file contents from https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
+            //   though triggering a warning for one rule instead
+            file: 'test/fixtures/simple.js',
+            textColor: 'orange,s{blue}',
+            outputPath,
+            logging
+          });
+          const contents = await readFile(outputPath, 'utf8');
+          const expected = await readFile(
+            eslintBadgeWithFailingTemplatesPath, 'utf8'
+          );
+          expect(contents).to.equal(expected);
+          expect([...returnedRulesMeta.entries()].some(([ruleId]) => {
+            return ruleId === 'curly';
+          })).to.be.true;
+          expect(returnedResults[0].filePath).to.contain(
+            'test/fixtures/simple.js'
+          );
+          expect(returnedResults[0].errorCount).to.equal(1);
+          expect(returnedResults[0].warningCount).to.equal(1);
+        }
+      );
+
+      // Todo: test special template arguments
     });
 
     it('should throw with results not matching `rulesMeta`', function () {
