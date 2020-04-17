@@ -53,7 +53,7 @@ describe('`badger`', function () {
     after(unlinker);
 
     describe('Main badger export (`eslint -f`)', function () {
-      it('should return `badgerEngine` results', async function () {
+      it('should return default badger export results', async function () {
         // This doesn't return a Promise (to avoid printing
         //   `Promise { <pending> }`), so we have to try at a timeout
         mainBadger(

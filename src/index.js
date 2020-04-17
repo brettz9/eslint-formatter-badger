@@ -29,16 +29,10 @@ const defaultLintingTypes = [
 */
 
 /**
-* @typedef {PlainObject} FormatterBadgerOptions
-* @property {string} [packageJsonPath=
-* resolve(process.cwd(), './package.json')]
-*/
-
-/**
  * @param {external:ESLintResult[]} results
  * @param {PlainObject} data
  * @param {external:ESLintRulesMetaData} data.rulesMeta
- * @param {FormatterBadgerOptions} [options]
+ * @param {EslintFormatterBadgerOptions} [options]
  * @returns {Promise<void>}
  */
 module.exports = (results, {rulesMeta}, options = {}) => {
@@ -62,10 +56,6 @@ const badger = module.exports.badger = async ({
 }) => {
   const {packageJsonPath, configPath, noConfig} = options;
 
-  // The `noConfig` allows our CLI to set this when neither `configPath`
-  //   nor `packageJsonPath` is set, but we otherwise default to the
-  //   `package.json` in the current working directory since otherwise,
-  //    `eslint -f .`-style calls will have no way to get at options.
   const opts = noConfig
     ? options
     : configPath
@@ -505,18 +495,42 @@ const badger = module.exports.badger = async ({
 */
 
 /**
- * @param {FormatterBadgerOptions} cfg
+ * @param {EslintFormatterBadgerOptions} cfg
  * @returns {Promise<BadgerEngineResults>}
  */
 module.exports.badgerEngine = async (cfg) => {
   const {
+    packageJsonPath,
+    configPath
+  } = cfg;
+
+  // Unless neither `configPath` nor `packageJsonPath` are set, we
+  //    default to the package.json` in the current working directory
+  //    since otherwise `eslint -f .`-style calls will have no way to
+  //    get at options.
+  const noConfig = !packageJsonPath && !configPath;
+  const opts = noConfig
+    ? cfg
+    : configPath
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      ? {...require(configPath), ...cfg}
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      : {...require(
+        packageJsonPath || resolve(process.cwd(), './package.json')
+      ).eslintFormatterBadgerOptions, ...cfg} || cfg;
+
+  const {
     file,
     noUseEslintIgnore = false,
     noUseEslintrc = false,
-    packageJsonPath,
-    configPath,
     eslintConfigPath = undefined
-  } = cfg;
+  } = opts;
+
+  if (!file) {
+    throw new Error(
+      'The `file` argument is required (or use `--help` or `--version`).'
+    );
+  }
 
   const cli = new CLIEngine({
     configFile: eslintConfigPath,
@@ -533,16 +547,17 @@ module.exports.badgerEngine = async (cfg) => {
   /*
   results.map(({filePath}) => {
     return cli.getConfigForFile(filePath);
-    // console.log('cfg', cfg);
+    // console.log('opts', opts);
   });
   */
 
   await badger({
-    ...cfg,
+    ...opts,
     results,
     rulesMeta,
-    noConfig: !packageJsonPath && !configPath,
-    packageJsonPath
+    // Already resolved
+    noConfig: true,
+    packageJsonPath: false
   });
   return {
     results,

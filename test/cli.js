@@ -75,6 +75,31 @@ describe('Binary', function () {
       expect(contents).to.equal(expected);
     });
 
+    it('should execute main CLI with `configPath`', async function () {
+      const {stdout, stderr} = await execFile(
+        binFile,
+        [
+          '--configPath',
+          getFixturePath('config.js'),
+          outputPath
+        ],
+        {
+          timeout: 15000
+        }
+      );
+      if (stderr) {
+        // eslint-disable-next-line no-console
+        console.log('stderr', stderr);
+      }
+      expect(stdout).to.contain(
+        `Finished writing to ${outputPath}`
+      );
+      expect(stderr).to.equal('');
+      const contents = await readFile(outputPath, 'utf8');
+      const expected = await readFile(cliOneFailingSuggestion, 'utf8');
+      expect(contents).to.equal(expected);
+    });
+
     it('should work with `eslint -f`', async function () {
       try {
         await execFile(

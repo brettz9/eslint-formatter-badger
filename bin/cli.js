@@ -14,14 +14,12 @@ if (!optionDefinitions) { // cliBasics handled
   process.exit();
 }
 
-if (!optionDefinitions.file) {
+(async () => {
+try {
+  await badgerEngine(optionDefinitions);
+} catch (err) {
   // eslint-disable-next-line no-console
-  console.error(
-    'The `file` argument is required (or use `--help` or `--version`).'
-  );
+  console.error(err);
   process.exit();
 }
-
-(async () => {
-await badgerEngine(optionDefinitions);
 })();
