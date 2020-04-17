@@ -343,27 +343,20 @@ const badger = module.exports.badger = async ({
       ruleIds = []
     } = lintingInfo[type];
 
-    const specialTemplate = (typ, templ) => {
-      const mapped = ruleIds.map((ruleId, i) => {
+    const specialTemplate = (templ) => {
+      return ruleIds.map((ruleId, i) => {
         return template(templ, {
           index: i + 1,
           ruleId,
           lintingType: type
         });
       });
-      if (mapped.length) {
-        // Get rid of objects now that data mapped
-        const set = lintingInfo[type];
-        set.clear();
-        mapped.forEach((item) => {
-          set.add(item);
-        });
-      }
     };
 
+    let templates;
     switch (type) {
     case 'missing':
-      specialTemplate(type, missingLintingTemplate);
+      templates = specialTemplate(missingLintingTemplate);
       break;
     default:
       break;
@@ -371,7 +364,7 @@ const badger = module.exports.badger = async ({
 
     return [type, {
       text, ruleIds,
-      failing, warnings, errors
+      failing, warnings, errors, templates
     }];
   });
 
@@ -452,7 +445,7 @@ const badger = module.exports.badger = async ({
   lintingTypesWithColors = filteredLintingTypes.map((
     [lintingType, {
       text, ruleIds,
-      failing, warnings, errors
+      failing, warnings, errors, templates
     }]
   ) => {
     const glue = (ruleId, index) => {
@@ -499,7 +492,7 @@ const badger = module.exports.badger = async ({
           return glue(ruleId, i + 1);
         }).join('')
         : ''
-      }`,
+      }${templates ? templates.join('') : ''}`,
       ...color
     ];
   });
@@ -538,7 +531,8 @@ module.exports.badgerEngine = async (cfg) => {
     file,
     noUseEslintIgnore = false,
     noUseEslintrc = false,
-    eslintConfigPath = undefined
+    eslintConfigPath = undefined,
+    eslintRulesdir = undefined
   } = opts;
 
   if (!file) {
@@ -547,11 +541,15 @@ module.exports.badgerEngine = async (cfg) => {
     );
   }
 
-  const cli = new CLIEngine({
+  const cliConfig = {
     configFile: eslintConfigPath,
     ignore: !noUseEslintIgnore, // `true` `is ESLint default
     useEslintrc: !noUseEslintrc // `true` `is ESLint default
-  });
+  };
+  if (eslintRulesdir) {
+    cliConfig.rulePaths = eslintRulesdir;
+  }
+  const cli = new CLIEngine(cliConfig);
 
   const {results} = cli.executeOnFiles(file);
   // console.log('results', results);

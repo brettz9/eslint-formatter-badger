@@ -31,6 +31,9 @@ const eslintBadgePath = join(__dirname, '../eslint-badge.svg');
 const eslintBadgeWithTemplatesPath = getFixturePath(
   'eslintBadgeWithTemplatesPath.svg'
 );
+const eslintBadgeCustomRulesPath = getFixturePath(
+  'eslintBadgeCustomRulesPath.svg'
+);
 const eslintBadgeWithFailingTemplatesPath = getFixturePath(
   'eslintBadgeWithFailingTemplatesPath.svg'
 );
@@ -111,6 +114,43 @@ describe('`badger`', function () {
         expect(returnedResults[0].errorCount).to.equal(1);
         expect(returnedResults[0].warningCount).to.equal(1);
       });
+
+      it(
+        'should return `badgerEngine` results using rules with missing meta',
+        async function () {
+          const {
+            results: returnedResults,
+            rulesMeta: returnedRulesMeta
+          } = await badgerEngine({
+            noUseEslintrc: true,
+            noUseEslintIgnore: true,
+            eslintRulesdir: [getFixturePath('rules')],
+            eslintConfigPath: getFixturePath(
+              'eslint-config-with-custom-rules.js'
+            ),
+            // Using file contents from https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
+            //   though triggering a warning for one rule instead
+            file: 'test/fixtures/function.js',
+            textColor: 'orange,s{blue}',
+            logging
+          });
+          const contents = await readFile(eslintBadgePath, 'utf8');
+          const expected = await readFile(eslintBadgeCustomRulesPath, 'utf8');
+          expect(contents).to.equal(expected);
+          expect([...returnedRulesMeta.entries()].map(([ruleId]) => {
+            return ruleId;
+          })).to.include.members([
+            'rule-with-meta-type',
+            'rule-with-no-meta-type',
+            'rule-with-no-meta'
+          ]);
+          expect(returnedResults[0].filePath).to.contain(
+            'test/fixtures/function.js'
+          );
+          expect(returnedResults[0].errorCount).to.equal(1);
+          expect(returnedResults[0].warningCount).to.equal(0);
+        }
+      );
 
       it(
         'should return `badgerEngine` results with templates',

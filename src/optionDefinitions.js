@@ -36,17 +36,22 @@ const optionDefinitions = [
   {
     name: 'noUseEslintrc', type: Boolean,
     description: 'Whether to use an .eslintrc files. Corresponds to ' +
-      'inverse of ESLint\'s option of the same name.'
+      'inverse of ESLint\'s option of the same name. Defaults to `false`.'
   },
   {
     name: 'noUseEslintIgnore', type: Boolean,
     description: 'Whether to use ignore files; corresponds to ' +
-      'inverse of ESLint\'s `ignore`.'
+      'inverse of ESLint\'s `ignore`. Defaults to `false`'
   },
   {
     name: 'eslintConfigPath', type: String,
-    descirption: 'Path to ESLint rc config file',
+    description: 'Path to ESLint rc config file. Default is undefined.',
     typeLabel: '{underline path to eslint config}'
+  },
+  {
+    name: 'eslintRulesdir', type: String, multiple: true,
+    description: 'A path to a rules directory. Default is undefined.',
+    typeLabel: '{underline rules directory}'
   },
   {
     name: 'outputPath', type: String, defaultOption: true, alias: 'o',
