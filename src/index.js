@@ -337,10 +337,10 @@ const badger = module.exports.badger = async ({
       };
     }
     const {
-      failing = 0,
-      warnings = 0,
-      errors = 0,
-      ruleIds = []
+      failing,
+      warnings,
+      errors,
+      ruleIds
     } = lintingInfo[type];
 
     const specialTemplate = (templ) => {
