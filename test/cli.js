@@ -9,6 +9,8 @@ const execFile = promisify(ef);
 const unlink = promisify(ul);
 
 const binFile = join(__dirname, '../bin/cli.js');
+const eslintBadgePath = join(__dirname, '../eslint-badge.svg');
+const eslintBinFile = join(__dirname, '../node_modules/eslint/bin/eslint.js');
 
 const getFixturePath = (path) => {
   return join(__dirname, `fixtures/${path}`);
@@ -18,6 +20,7 @@ const getResultsPath = (path) => {
 };
 const outputPath = getResultsPath('cli-results.svg');
 const cliOneFailingSuggestion = getFixturePath('cli-1-failing-suggestion.svg');
+const mainEslintBadgeFixturePath = getFixturePath('main-eslint-badge.svg');
 
 describe('Binary', function () {
   this.timeout(8000);
@@ -45,7 +48,7 @@ describe('Binary', function () {
     before(unlinker);
     after(unlinker);
 
-    it('should execute', async function () {
+    it('should execute main CLI', async function () {
       const {stdout, stderr} = await execFile(
         binFile,
         [
@@ -70,6 +73,39 @@ describe('Binary', function () {
       const contents = await readFile(outputPath, 'utf8');
       const expected = await readFile(cliOneFailingSuggestion, 'utf8');
       expect(contents).to.equal(expected);
+    });
+
+    it('should work with `eslint -f`', async function () {
+      try {
+        await execFile(
+          eslintBinFile,
+          [
+            '-f', './src/index.js',
+            // We are ignoring so our project doesn't report when linting
+            '--no-ignore',
+            '--no-eslintrc',
+            '--config',
+            './test/fixtures/eslint-config.js',
+            'test/fixtures/simple.js'
+          ],
+          {
+            maxBuffer: Infinity,
+            stdio: 'inherit',
+            timeout: 15000
+          }
+        );
+      } catch (err) {
+        expect(err.stdout).to.contain(
+          `Finished writing to ${eslintBadgePath}`
+        );
+        expect(err.stderr).to.equal('');
+        const contents = await readFile(eslintBadgePath, 'utf8');
+        const expected = await readFile(mainEslintBadgeFixturePath, 'utf8');
+        expect(contents).to.equal(expected);
+        return;
+      }
+      const expected = false;
+      expect(expected).to.be.true;
     });
   });
 });

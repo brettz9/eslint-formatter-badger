@@ -12,23 +12,17 @@ module.exports = {
   overrides: [
     {
       files: 'test/**',
-      globals: {
-        expect: 'readonly'
-      },
-      env: {
-        mocha: true
-      }
-    },
-    {
-      files: 'test/programmatic.js',
       extends: [
         'plugin:@fintechstudios/eslint-plugin-chai-as-promised/recommended',
         'plugin:chai-expect-keywords/recommended',
         'plugin:chai-expect/recommended',
         'plugin:chai-friendly/recommended'
       ],
-      parserOptions: {
-        sourceType: 'module'
+      globals: {
+        expect: 'readonly'
+      },
+      env: {
+        mocha: true
       },
       rules: {
         'node/no-unsupported-features/es-syntax': ['error', {
@@ -40,6 +34,12 @@ module.exports = {
             allowChaiAsPromised: true
           }
         ]
+      }
+    },
+    {
+      files: 'test/programmatic.js',
+      parserOptions: {
+        sourceType: 'module'
       }
     }
   ],

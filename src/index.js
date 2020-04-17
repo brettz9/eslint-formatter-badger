@@ -41,8 +41,14 @@ const defaultLintingTypes = [
  * @param {FormatterBadgerOptions} [options]
  * @returns {Promise<void>}
  */
-module.exports = (results, {rulesMeta}, {packageJsonPath} = {}) => {
-  return badger({results, rulesMeta, options: {packageJsonPath}});
+module.exports = (results, {rulesMeta} = {}, options = {}) => {
+  (async () => {
+    await badger({logging: 'verbose', ...options, results, rulesMeta});
+  })();
+  // ESLint formatters can't return Promises, but they don't
+  //  prematurely exit either, so we can use the Promise above,
+  //  though without the benefit of chaining to the process
+  return '';
 };
 
 /**
