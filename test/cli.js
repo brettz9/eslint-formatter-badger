@@ -20,6 +20,12 @@ const getResultsPath = (path) => {
 };
 const outputPath = getResultsPath('cli-results.svg');
 const cliOneFailingSuggestion = getFixturePath('cli-1-failing-suggestion.svg');
+const cliOneFailingSuggestionFailingThreshold = getFixturePath(
+  'cli-1-failing-suggestion-failing-threshold.svg'
+);
+const cliOneFailingSuggestionMediumThreshold = getFixturePath(
+  'cli-1-failing-suggestion-medium-threshold.svg'
+);
 const cliOneFailingSuggestionCustomColor = getFixturePath(
   'cli-1-failing-suggestion-custom-color.svg'
 );
@@ -80,6 +86,74 @@ describe('Binary', function () {
       const expected = await readFile(cliOneFailingSuggestion, 'utf8');
       expect(contents).to.equal(expected);
     });
+
+    it(
+      'should execute main CLI falling to medium thresholds',
+      async function () {
+        const {stdout, stderr} = await execFile(
+          binFile,
+          [
+            '--passingThreshold', '0',
+            '--mediumThreshold', '4',
+            '--file', 'test/fixtures/sample.js',
+            '--logging', 'verbose',
+            '--noUseEslintIgnore',
+            '--noUseEslintrc',
+            outputPath
+          ],
+          {
+            timeout: 15000
+          }
+        );
+        if (stderr) {
+          // eslint-disable-next-line no-console
+          console.log('stderr', stderr);
+        }
+        expect(stdout).to.contain(
+          `Finished writing to ${outputPath}`
+        );
+        expect(stderr).to.equal('');
+        const contents = await readFile(outputPath, 'utf8');
+        const expected = await readFile(
+          cliOneFailingSuggestionMediumThreshold, 'utf8'
+        );
+        expect(contents).to.equal(expected);
+      }
+    );
+
+    it(
+      'should execute main CLI falling to medium thresholds',
+      async function () {
+        const {stdout, stderr} = await execFile(
+          binFile,
+          [
+            '--passingThreshold', '0',
+            '--mediumThreshold', '1',
+            '--file', 'test/fixtures/sample.js',
+            '--logging', 'verbose',
+            '--noUseEslintIgnore',
+            '--noUseEslintrc',
+            outputPath
+          ],
+          {
+            timeout: 15000
+          }
+        );
+        if (stderr) {
+          // eslint-disable-next-line no-console
+          console.log('stderr', stderr);
+        }
+        expect(stdout).to.contain(
+          `Finished writing to ${outputPath}`
+        );
+        expect(stderr).to.equal('');
+        const contents = await readFile(outputPath, 'utf8');
+        const expected = await readFile(
+          cliOneFailingSuggestionFailingThreshold, 'utf8'
+        );
+        expect(contents).to.equal(expected);
+      }
+    );
 
     it('should execute main CLI with `lintingTypeColor`', async function () {
       const {stdout, stderr} = await execFile(
