@@ -56,6 +56,10 @@ const badger = module.exports.badger = async ({
 }) => {
   const {packageJsonPath, configPath, noConfig} = options;
 
+  // Unless neither `configPath` nor `packageJsonPath` are set, we
+  //    default to the package.json` in the current working directory
+  //    since otherwise `eslint -f .`-style calls will have no way to
+  //    get at options.
   const opts = noConfig
     ? options
     : configPath
@@ -504,20 +508,16 @@ module.exports.badgerEngine = async (cfg) => {
     configPath
   } = cfg;
 
-  // Unless neither `configPath` nor `packageJsonPath` are set, we
-  //    default to the package.json` in the current working directory
-  //    since otherwise `eslint -f .`-style calls will have no way to
-  //    get at options.
-  const noConfig = !packageJsonPath && !configPath;
-  const opts = noConfig
-    ? cfg
-    : configPath
-      // eslint-disable-next-line import/no-dynamic-require, global-require
-      ? {...require(configPath), ...cfg}
-      // eslint-disable-next-line import/no-dynamic-require, global-require
-      : {...require(
-        packageJsonPath || resolve(process.cwd(), './package.json')
-      ).eslintFormatterBadgerOptions, ...cfg} || cfg;
+  const opts = configPath
+    // eslint-disable-next-line import/no-dynamic-require, global-require
+    ? {...require(configPath), ...cfg}
+    : packageJsonPath
+      ? {
+        // eslint-disable-next-line import/no-dynamic-require, global-require
+        ...require(packageJsonPath).eslintFormatterBadgerOptions,
+        ...cfg
+      }
+      : cfg;
 
   const {
     file,

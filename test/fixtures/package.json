@@ -1,0 +1,21 @@
+{
+  "name": "test",
+  "version": "0.0.0",
+  "author": "Brett Zamir",
+  "contributors": [],
+  "description": "just a test",
+  "private": true,
+  "keywords": [],
+  "repository": "https://github/com/brettz9/eslint-formatter-badger",
+  "homepage": "https://github/com/brettz9/eslint-formatter-badger",
+  "bugs": "https://github/com/brettz9/eslint-formatter-badger/issues",
+  "license": "MIT",
+  "dependencies": {},
+  "engines": {"node": ">=0.1.14"},
+  "eslintFormatterBadgerOptions": {
+    "file": "test/fixtures/sample.js",
+    "logging": "verbose",
+    "noUseEslintIgnore": true,
+    "noUseEslintrc": true
+  }
+}
