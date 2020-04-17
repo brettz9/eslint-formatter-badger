@@ -66,7 +66,7 @@ describe('`badger`', function () {
             logging
           }
         );
-        await delay(8000);
+        await delay(5000);
         const contents = await readFile(eslintBadgePath, 'utf8');
         // This fixture shows a smaller number of rules than
         //  other tests despite our not narrowing the config given our

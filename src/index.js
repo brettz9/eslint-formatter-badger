@@ -41,7 +41,7 @@ const defaultLintingTypes = [
  * @param {FormatterBadgerOptions} [options]
  * @returns {Promise<void>}
  */
-module.exports = (results, {rulesMeta} = {}, options = {}) => {
+module.exports = (results, {rulesMeta}, options = {}) => {
   (async () => {
     await badger({logging: 'verbose', ...options, results, rulesMeta});
   })();
@@ -59,7 +59,7 @@ module.exports = (results, {rulesMeta} = {}, options = {}) => {
  */
 const badger = module.exports.badger = async ({
   results, rulesMeta, ...options
-} = {}) => {
+}) => {
   const {packageJsonPath, configPath, noConfig} = options;
 
   // The `noConfig` allows our CLI to set this when neither `configPath`
