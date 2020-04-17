@@ -38,6 +38,18 @@ npm i eslint-formatter-badger
 eslint -f badger .
 ```
 
+Or, to get use of full options, use the CLI interface.
+
+## CLI
+
+![badges/cli.svg](./badges/cli.svg)
+
+## Immediate to-dos
+
+1. Test for missing template
+2. Complete coverage (missing source, subthresholds, custom rule map)
+3. Ensure can iterate over all of the user's own types as separate panels
+
 ## To-dos
 
 1. Support/document usage if after the fact (not as eslint formatter, but acting
