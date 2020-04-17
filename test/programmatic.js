@@ -3,6 +3,7 @@ import {promisify} from 'util';
 import {join} from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import delay from 'delay';
 // eslint-disable-next-line import/no-named-default
 import {badger, badgerEngine, default as mainBadger} from '../src/index.js';
 import rulesMeta from './fixtures/rulesMeta.js';
@@ -53,7 +54,9 @@ describe('`badger`', function () {
 
     describe('Main badger export (`eslint -f`)', function () {
       it('should return `badgerEngine` results', async function () {
-        await mainBadger(
+        // This doesn't return a Promise (to avoid printing
+        //   `Promise { <pending> }`), so we have to try at a timeout
+        mainBadger(
           results,
           {rulesMeta: simpleRulesMeta},
           {
@@ -63,10 +66,11 @@ describe('`badger`', function () {
             logging
           }
         );
+        await delay(8000);
         const contents = await readFile(eslintBadgePath, 'utf8');
-        // This fixture shows a larger total number of rules than do
-        //  other tests as we are not narrowing the config (and this
-        //  even despite our `simpleRulesMeta` being smaller than it would be)
+        // This fixture shows a smaller number of rules than
+        //  other tests despite our not narrowing the config given our
+        //  smaller `simpleRulesMeta`.
         const expected = await readFile(mainEslintBadgeFixturePath, 'utf8');
         expect(contents).to.equal(expected);
       });

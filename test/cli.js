@@ -20,7 +20,7 @@ const getResultsPath = (path) => {
 };
 const outputPath = getResultsPath('cli-results.svg');
 const cliOneFailingSuggestion = getFixturePath('cli-1-failing-suggestion.svg');
-const mainEslintBadgeFixturePath = getFixturePath('main-eslint-badge.svg');
+const mainEslintBadgeFixturePath = getFixturePath('cli-main-eslint-badge.svg');
 
 describe('Binary', function () {
   this.timeout(8000);
