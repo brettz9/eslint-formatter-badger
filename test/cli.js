@@ -26,6 +26,9 @@ const cliOneFailingSuggestionFailingThreshold = getFixturePath(
 const cliOneFailingSuggestionMediumThreshold = getFixturePath(
   'cli-1-failing-suggestion-medium-threshold.svg'
 );
+const cliOneFailingSuggestionMediumPercentageThreshold = getFixturePath(
+  'cli-1-failing-suggestion-medium-percentage-threshold.svg'
+);
 const cliOneFailingSuggestionCustomColor = getFixturePath(
   'cli-1-failing-suggestion-custom-color.svg'
 );
@@ -88,7 +91,41 @@ describe('Binary', function () {
     });
 
     it(
-      'should execute main CLI falling to medium thresholds',
+      'should execute main CLI falling to medium percentage thresholds',
+      async function () {
+        const {stdout, stderr} = await execFile(
+          binFile,
+          [
+            '--passingThreshold', '100%',
+            '--mediumThreshold', '5%',
+            '--file', 'test/fixtures/sample.js',
+            '--logging', 'verbose',
+            '--noUseEslintIgnore',
+            '--noUseEslintrc',
+            outputPath
+          ],
+          {
+            timeout: 15000
+          }
+        );
+        if (stderr) {
+          // eslint-disable-next-line no-console
+          console.log('stderr', stderr);
+        }
+        expect(stdout).to.contain(
+          `Finished writing to ${outputPath}`
+        );
+        expect(stderr).to.equal('');
+        const contents = await readFile(outputPath, 'utf8');
+        const expected = await readFile(
+          cliOneFailingSuggestionMediumPercentageThreshold, 'utf8'
+        );
+        expect(contents).to.equal(expected);
+      }
+    );
+
+    it(
+      'should execute main CLI falling to medium numeric thresholds',
       async function () {
         const {stdout, stderr} = await execFile(
           binFile,
@@ -122,7 +159,7 @@ describe('Binary', function () {
     );
 
     it(
-      'should execute main CLI falling to medium thresholds',
+      'should execute main CLI falling to numeric failing thresholds',
       async function () {
         const {stdout, stderr} = await execFile(
           binFile,

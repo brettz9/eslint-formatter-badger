@@ -170,7 +170,7 @@ const badger = module.exports.badger = async ({
   const aggregatedErrorsAndWarningsCount = aggregatedErrorCount +
     aggregatedWarningCount;
   const aggregatedErrorsAndWarningsPct =
-    aggregatedErrorsAndWarningsCount / total;
+    100 * aggregatedErrorsAndWarningsCount / total;
 
   /**
    * @param {string} color
@@ -182,7 +182,7 @@ const badger = module.exports.badger = async ({
     if (!color && threshold) {
       if (threshold.endsWith('%')) {
         const thresh = Number.parseFloat(threshold.slice(0, -1));
-        if (thresh > aggregatedErrorsAndWarningsPct) {
+        if (100 - aggregatedErrorsAndWarningsPct >= thresh) {
           color = thresholdColor;
         }
       } else {
@@ -197,11 +197,11 @@ const badger = module.exports.badger = async ({
 
   /**
    * Gets the color per current counts and thresholds.
-   * @param {string} mediumThresh
    * @param {string} passingThresh
+   * @param {string} mediumThresh
    * @returns {string[]}
   */
-  function getColorForCount (mediumThresh, passingThresh) {
+  function getColorForCount (passingThresh, mediumThresh) {
     let color;
     color = checkThreshold(color, passingThresh, passingColor);
     color = checkThreshold(color, mediumThresh, mediumColor);
@@ -233,7 +233,7 @@ const badger = module.exports.badger = async ({
             errorWarningsPct: aggregatedErrorsAndWarningsPct
           }
         ),
-        ...(textColor || [getColorForCount(mediumThreshold, passingThreshold)])
+        ...(textColor || [getColorForCount(passingThreshold, mediumThreshold)])
       ],
       ...(lintingTypesWithColors || [])
     ];
@@ -436,8 +436,8 @@ const badger = module.exports.badger = async ({
    */
   function getColorForThresholds (type) {
     const color = getColorForCount(
-      getThresholdForRangeAndType('medium', type),
-      getThresholdForRangeAndType('passing', type)
+      getThresholdForRangeAndType('passing', type),
+      getThresholdForRangeAndType('medium', type)
     );
     return [color];
   }
@@ -484,9 +484,9 @@ const badger = module.exports.badger = async ({
         warnings,
         errors,
 
-        failingPct: failing / aggregatedErrorsAndWarningsCount,
-        warningsPct: warnings / aggregatedWarningCount,
-        errorsPct: errors / aggregatedErrorCount
+        failingPct: 100 * failing / aggregatedErrorsAndWarningsCount,
+        warningsPct: 100 * warnings / aggregatedWarningCount,
+        errorsPct: 100 * errors / aggregatedErrorCount
       })}\n${failing && failingTemplate
         ? ruleIds.sort().map((ruleId, i) => {
           return glue(ruleId, i + 1);
