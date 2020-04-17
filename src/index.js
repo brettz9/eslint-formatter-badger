@@ -268,13 +268,15 @@ const badger = module.exports.badger = async ({
 
   // ALL RULES USED (passing or failing)
   const ruleIdToType = rulesMetaEntries.reduce((obj, [ruleId, info]) => {
-    let {
-      type
-      // Might also destructure `docs` and then use:
-      //   const {category} = docs || {}; // "Possible Errors"
-    } = info || {};
+    let type;
     if (userRuleIdToType[ruleId]) {
       type = userRuleIdToType[ruleId];
+    } else {
+      ({
+        type
+        // Might also destructure `docs` and then use:
+        //   const {category} = docs || {}; // "Possible Errors"
+      } = info || {});
     }
     if (!type) {
       type = 'missing';
