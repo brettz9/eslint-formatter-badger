@@ -6,6 +6,7 @@ const fs = require('fs');
 const {promisify} = require('util');
 const {resolve} = require('path');
 
+const {CLIEngine} = require('eslint');
 const badgeUp = require('badge-up').v2;
 const template = require('es6-template-strings');
 
@@ -489,4 +490,46 @@ const badger = module.exports.badger = async ({
   });
 
   await printBadge();
+};
+
+/**
+ * @param {FormatterBadgerOptions} cfg
+ * @returns {Promise<void>}
+ */
+module.exports.badgerEngine = async (cfg) => {
+  const {
+    file,
+    noUseEslintIgnore = false,
+    noUseEslintrc = false,
+    packageJsonPath,
+    configPath,
+    eslintConfigPath = undefined
+  } = cfg;
+
+  const cli = new CLIEngine({
+    configFile: eslintConfigPath,
+    ignore: !noUseEslintIgnore, // `true` `is ESLint default
+    useEslintrc: !noUseEslintrc // `true` `is ESLint default
+  });
+
+  const {results} = cli.executeOnFiles(file);
+  // console.log('results', results);
+
+  const rulesMeta = cli.getRules();
+  // console.log('rulesMeta', rules.entries());
+
+  /*
+  results.map(({filePath}) => {
+    return cli.getConfigForFile(filePath);
+    // console.log('cfg', cfg);
+  });
+  */
+
+  await badger({
+    ...cfg,
+    results,
+    rulesMeta,
+    noConfig: !packageJsonPath && !configPath,
+    packageJsonPath
+  });
 };

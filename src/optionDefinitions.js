@@ -44,6 +44,11 @@ const optionDefinitions = [
       'inverse of ESLint\'s `ignore`.'
   },
   {
+    name: 'eslintConfigPath', type: String,
+    descirption: 'Path to ESLint rc config file',
+    typeLabel: '{underline path to eslint config}'
+  },
+  {
     name: 'outputPath', type: String, defaultOption: true, alias: 'o',
     description: 'Path to which to save the file; defaults to ' +
       '"eslint-badge.svg" in the current working directory',

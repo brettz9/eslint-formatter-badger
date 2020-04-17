@@ -3,7 +3,7 @@ import {promisify} from 'util';
 import {join} from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {badger} from '../src/index.js';
+import {badger, badgerEngine} from '../src/index.js';
 import rulesMeta from './fixtures/rulesMeta.js';
 import simpleResults from './fixtures/simpleResults.js';
 
@@ -23,7 +23,7 @@ const getResultsPath = (path) => {
 
 const eslintBadgePath = join(__dirname, '../eslint-badge.svg');
 const outputPath = getResultsPath('results.svg');
-const eslintBadgeFixturePath = 'eslint-badge.svg';
+const eslintBadgeFixturePath = getFixturePath('eslint-badge.svg');
 const textColorPath = getFixturePath('text-color.svg');
 const emptyTextTemplatePath = getFixturePath('emptyTextTemplatePath.svg');
 
@@ -63,8 +63,11 @@ describe('`badger`', function () {
     });
 
     it('should work with default output path', async function () {
-      await badger({
-        file: 'test/fixtures/sample.js',
+      await badgerEngine({
+        noUseEslintrc: true,
+        noUseEslintIgnore: true,
+        eslintConfigPath: getFixturePath('eslint-config.js'),
+        file: 'test/fixtures/simple.js',
         textColor: 'orange,s{blue}',
         logging,
         rulesMeta,
