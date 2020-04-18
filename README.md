@@ -40,6 +40,58 @@ eslint -f badger .
 
 Or, to get use of full options, use the CLI interface.
 
+## API
+
+The programmatic API.
+
+### Default export
+
+`badgerDefault(resultsArray, {rulesMeta: <object>}, options) => ""`
+
+This method is needed as the default so as to work when called by `eslint -f`.
+
+However, the named exports `badger` or `badgerEngine` are to be
+preferred for regular progrmmatic usage (or use our CLI) as the
+ESLint formatting API forces us to adhere to these limitations:
+
+1. Return an (empty) string rather than a Promise (otherwise ESLint
+    will print "Promise"), and as such, if used programmatically, the
+    caller wouldn't be notified when the formatting is complete.
+1. The formatter adheres to the multiple argument signature, and
+    though we pass on `options` if this is called programmatically,
+    ESLint does not pass in any third argument, so for `eslint -f`
+    usage, we default to checking for any options in the
+    `eslintFormatterBadgerOptions` property of the current working
+    directory's `package.json`.
+
+#### Arguments
+
+For the structure of the `resultsArray`, see <https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-results-object>
+and for the structure of the messages within that object, see <https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-message-object>.
+
+For the structure of the `rulesMeta` object, see <https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument>.
+
+For `options`, see `badger` below.
+
+### Named export `badger`
+
+`badger({results, rulesMeta, ...options})`
+
+For the structure of the `rulesMeta` object, see <https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument>.
+
+Note that in programmatic usage (not `eslint -f`), a meta `Map` as passed
+in by [`cli.getRules()`](https://eslint.org/docs/developer-guide/nodejs-api#cliengine-getrules)
+(and as used by our `badgerEngine`) can be used in addition to the
+structure detailed at <https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument>.
+
+The other options are the same as those detailed in the CLI.
+
+### Named export `badgerEngine`
+
+`badgerEngine(options)`
+
+This is what is used by the CLI. See the CLI for the available options.
+
 ## CLI
 
 ![badges/cli.svg](./badges/cli.svg)
@@ -52,8 +104,6 @@ Or, to get use of full options, use the CLI interface.
     1. Provide a useful optional built-in config map
 1. Docs
     1. Add eslint badge to README
-    1. Support/document usage if after the fact (not as eslint formatter, but acting
-        on eslint result files?)
     1. Mention idea when ready of listing linting of dependencies per
         [eslint-plugin-privileges](https://github.com/brettz9/eslint-plugin-privileges)
         ideas (incomplete project), providing some security

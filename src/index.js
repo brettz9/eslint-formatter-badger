@@ -33,7 +33,7 @@ const defaultLintingTypes = [
  * @param {PlainObject} data
  * @param {external:ESLintRulesMetaData} data.rulesMeta
  * @param {EslintFormatterBadgerOptions} [options]
- * @returns {Promise<void>}
+ * @returns {""}
  */
 module.exports = (results, {rulesMeta}, options = {}) => {
   (async () => {
