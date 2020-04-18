@@ -552,21 +552,8 @@ module.exports.badgerEngine = async (cfg) => {
   const cli = new CLIEngine(cliConfig);
 
   const {results} = cli.executeOnFiles(file);
-  // console.log('results', results);
 
   const rulesMeta = cli.getRules();
-  /*
-  console.error('rulesMeta', [...rulesMeta.entries()].filter(([ruleId]) => {
-    return ruleId === 'no-console'
-  })[0][1].meta.schema[0].properties.allow.items);
-  */
-
-  /*
-  results.map(({filePath}) => {
-    return cli.getConfigForFile(filePath);
-    // console.log('opts', opts);
-  });
-  */
 
   await badger({
     ...opts,

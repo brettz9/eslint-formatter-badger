@@ -3,6 +3,10 @@
 module.exports = {
   meta: {},
   create (context) {
-    return {};
+    return {
+      FunctionDeclaration (node) {
+        context.report({message: 'Oops2', node});
+      }
+    };
   }
 };

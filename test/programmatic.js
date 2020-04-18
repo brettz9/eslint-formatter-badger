@@ -150,7 +150,7 @@ describe('`badger`', function () {
           expect(returnedResults[0].filePath).to.contain(
             'test/fixtures/function.js'
           );
-          expect(returnedResults[0].errorCount).to.equal(1);
+          expect(returnedResults[0].errorCount).to.equal(2);
           expect(returnedResults[0].warningCount).to.equal(0);
         }
       );
