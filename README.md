@@ -104,16 +104,16 @@ This is what is used by the CLI. See the CLI for the available options.
     1. Complete coverage
     1. Ensure can iterate over all of the user's own types as separate panels
     1. Provide a useful optional built-in config map
-1. Docs
-    1. Mention idea when ready of listing linting of dependencies per
-        [eslint-plugin-privileges](https://github.com/brettz9/eslint-plugin-privileges)
-        ideas (incomplete project), providing some security
-        or at least best practices assurances (ideally showcase as an
-        extra badge here)
 1. Release
 
 ## To-dos
 
+1. When privileges (or [es-file-traverse](https://github.com/brettz9/es-file-traverse))
+    project is ready, document idea of listing linting of dependencies per
+    [eslint-plugin-privileges](https://github.com/brettz9/eslint-plugin-privileges)
+    ideas (currently an incomplete project), providing some security
+    or at least best practices assurances (ideally showcase by linting own
+    dependencies and showing as an extra badge in this README)
 1. Option to pass on to another reporter (so don't need to add
     [eslint-multiplexer](https://github.com/pimlie/eslint-multiplexer)
     or [eslint-formatter-multiple](https://github.com/halkeye/eslint-formatter-multiple)
