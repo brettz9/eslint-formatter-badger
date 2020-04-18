@@ -47,7 +47,7 @@ Or, to get use of full options, use the CLI interface.
 ## Immediate to-dos
 
 1. Test for missing template
-2. Complete coverage (subthresholds, custom rule map)
+2. Complete coverage (custom rule map)
 3. Ensure can iterate over all of the user's own types as separate panels
 4. Add eslint badge to README
 5. Release

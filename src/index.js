@@ -415,11 +415,11 @@ const badger = module.exports.badger = async ({
   parseThreshold('medium', mediumThresholds);
 
   /**
-   * @param {string} type
    * @param {"passing"|"medium"} range
+   * @param {string} type
    * @returns {string}
    */
-  function getThresholdForRangeAndType (type, range) {
+  function getThresholdForRangeAndType (range, type) {
     let thresh;
     if (thresholdContainer[range]) {
       if (typeof thresholdContainer[range] === 'string') {

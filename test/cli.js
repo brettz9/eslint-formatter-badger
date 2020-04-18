@@ -35,6 +35,10 @@ const cliOneFailingSuggestionMediumThreshold = getFixturePath(
 const cliOneFailingSuggestionMediumPercentageThreshold = getFixturePath(
   'cli-1-failing-suggestion-medium-percentage-threshold.svg'
 );
+const cliOneFailingSuggestionMediumPercentageThresholdPlural =
+  getFixturePath(
+    'cli-1-failing-suggestion-medium-percentage-threshold-plural.svg'
+  );
 const cliOneFailingSuggestionCustomColor = getFixturePath(
   'cli-1-failing-suggestion-custom-color.svg'
 );
@@ -181,6 +185,41 @@ describe('Binary', function () {
         const contents = await readFile(outputPath, 'utf8');
         const expected = await readFile(
           cliOneFailingSuggestionMediumPercentageThreshold, 'utf8'
+        );
+        expect(contents).to.equal(expected);
+      }
+    );
+
+    it(
+      'should execute main CLI falling to medium percentage ' +
+        'thresholds (plural)',
+      async function () {
+        const {stdout, stderr} = await execFile(
+          binFile,
+          [
+            '--passingThresholds', 'problem=20%,suggestion=100%',
+            '--mediumThresholds', 'problem=10%,suggestion=5%',
+            '--file', 'test/fixtures/sample.js',
+            '--logging', 'verbose',
+            '--noUseEslintIgnore',
+            '--noUseEslintrc',
+            outputPath
+          ],
+          {
+            timeout: 15000
+          }
+        );
+        if (stderr) {
+          // eslint-disable-next-line no-console
+          console.log('stderr', stderr);
+        }
+        expect(stdout).to.contain(
+          `Finished writing to ${outputPath}`
+        );
+        expect(stderr).to.equal('');
+        const contents = await readFile(outputPath, 'utf8');
+        const expected = await readFile(
+          cliOneFailingSuggestionMediumPercentageThresholdPlural, 'utf8'
         );
         expect(contents).to.equal(expected);
       }
