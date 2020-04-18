@@ -104,6 +104,18 @@ However, as a programmatic API, a few more type options are possible:
 
 ![badges/cli.svg](./badges/cli.svg)
 
+## See also
+
+- [filesize-badger](https://github.com/brettz9/filesize-badger) - Locally created
+    badges indicating file size (also buildable as part of Rollup routine)
+- [mocha-badge-generator](https://github.com/ianpogi5/mocha-badge-generator) - Locally
+    created badges for Mocha test results
+- [coveradge](https://github.com/brettz9/coveradge) - Locally-created badges
+    for nyc/istanbul coverage
+- [license-badger](https://github.com/brettz9/license-badger) - Locally-created
+    badges indicating license types (by degree of permissiveness) used
+    within or required by the project.
+
 ## To-dos
 
 1. When privileges (or [es-file-traverse](https://github.com/brettz9/es-file-traverse))
