@@ -24,7 +24,7 @@
 
 # eslint-formatter-badger
 
-Create badges to reflect the number/types of passing eslint rules.
+Create badges to reflect the number/types of failing or passing eslint rules.
 
 ## Installation
 
