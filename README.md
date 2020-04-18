@@ -104,14 +104,6 @@ However, as a programmatic API, a few more type options are possible:
 
 ![badges/cli.svg](./badges/cli.svg)
 
-## Immediate to-dos
-
-1. Custom rule map
-    1. Complete coverage
-    1. Ensure can iterate over all of the user's own types as separate panels
-    1. Provide a useful optional built-in config map
-1. Release
-
 ## To-dos
 
 1. When privileges (or [es-file-traverse](https://github.com/brettz9/es-file-traverse))
@@ -120,6 +112,8 @@ However, as a programmatic API, a few more type options are possible:
     ideas (currently an incomplete project), providing some security
     or at least best practices assurances (ideally showcase by linting own
     dependencies and showing as an extra badge in this README)
+    1. Provide a useful optional built-in config map based on security
+        (e.g., `"no-eval": "vulernable", "no-global-assign": "intrusive"`)
 1. Option to pass on to another reporter (so don't need to add
     [eslint-multiplexer](https://github.com/pimlie/eslint-multiplexer)
     or [eslint-formatter-multiple](https://github.com/halkeye/eslint-formatter-multiple)

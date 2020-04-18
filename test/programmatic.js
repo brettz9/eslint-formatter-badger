@@ -44,6 +44,9 @@ const oneFailingSuggestion = getFixturePath('1-failing-suggestion.svg');
 const oneFailingSuggestionWithLines = getFixturePath(
   '1-failing-suggestion-with-lines.svg'
 );
+const oneFailingSuggestionCustomRuleMap = getFixturePath(
+  '1-failing-suggestion-custom-rulemap.svg'
+);
 
 describe('`badger`', function () {
   this.timeout(15000);
@@ -235,6 +238,36 @@ describe('`badger`', function () {
       );
 
       // Todo: test special template arguments
+    });
+
+    it('should allow custom rule map as object', async function () {
+      const {
+        results: returnedResults,
+        rulesMeta: returnedRulesMeta
+      } = await badgerEngine({
+        ruleMap: {
+          'no-console': 'debugging'
+        },
+        file: 'test/fixtures/sample.js',
+        logging: 'verbose',
+        noUseEslintIgnore: true,
+        noUseEslintrc: true,
+        outputPath
+      });
+      const contents = await readFile(outputPath, 'utf8');
+      const expected = await readFile(
+        oneFailingSuggestionCustomRuleMap, 'utf8'
+      );
+      expect(contents).to.equal(expected);
+
+      expect([...returnedRulesMeta.entries()].some(([ruleId]) => {
+        return ruleId === 'no-console';
+      })).to.be.true;
+      expect(returnedResults[0].filePath).to.contain(
+        'test/fixtures/sample.js'
+      );
+      expect(returnedResults[0].errorCount).to.equal(1);
+      expect(returnedResults[0].warningCount).to.equal(0);
     });
 
     it('should throw with results not matching `rulesMeta`', function () {
