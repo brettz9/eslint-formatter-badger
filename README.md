@@ -2,6 +2,8 @@
 [![Dependencies](https://img.shields.io/david/brettz9/eslint-formatter-badger.svg)](https://david-dm.org/brettz9/eslint-formatter-badger)
 [![devDependencies](https://img.shields.io/david/dev/brettz9/eslint-formatter-badger.svg)](https://david-dm.org/brettz9/eslint-formatter-badger?type=dev)
 
+[![eslint badge](https://raw.githubusercontent.com/brettz9/eslint-formatter-badger/master/badges/eslint-badge.svg?sanitize=true)](badges/eslint-badge.svg)
+
 <!--[![Actions Status](https://github.com/brettz9/eslint-formatter-badger/workflows/Node%20CI/badge.svg)](https://github.com/brettz9/eslint-formatter-badger/actions)-->
 [![testing badge](https://raw.githubusercontent.com/brettz9/eslint-formatter-badger/master/badges/tests-badge.svg?sanitize=true)](badges/tests-badge.svg)
 [![coverage badge](https://raw.githubusercontent.com/brettz9/eslint-formatter-badger/master/badges/coverage-badge.svg?sanitize=true)](badges/coverage-badge.svg)
@@ -103,7 +105,6 @@ This is what is used by the CLI. See the CLI for the available options.
     1. Ensure can iterate over all of the user's own types as separate panels
     1. Provide a useful optional built-in config map
 1. Docs
-    1. Add eslint badge to README
     1. Mention idea when ready of listing linting of dependencies per
         [eslint-plugin-privileges](https://github.com/brettz9/eslint-plugin-privileges)
         ideas (incomplete project), providing some security

@@ -13,6 +13,7 @@
     "cli": "./bin/cli.js",
     "coverage": "open-cli coverage/lcov-report/index.html",
     "coverage-badge": "coveradge badges/coverage-badge.svg",
+    "eslint-badge": "npm run cli -- badges/eslint-badge.svg --file .",
     "eslint-formatted": "eslint -f ./src/index.js --ext=js,md,html .",
     "eslint": "eslint --ext=js,md,html .",
     "mocha": "mocha test/*.js",
