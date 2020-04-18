@@ -52,7 +52,6 @@ Or, to get use of full options, use the CLI interface.
     1. Provide a useful optional built-in config map
 1. Docs
     1. Add eslint badge to README
-    1. Note that "missing" only documents missing rules that are failing
     1. Support/document usage if after the fact (not as eslint formatter, but acting
         on eslint result files?)
     1. Mention idea when ready of listing linting of dependencies per

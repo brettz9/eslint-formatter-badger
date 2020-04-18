@@ -234,7 +234,8 @@ const optionDefinitions = [
         // eslint-disable-next-line no-template-curly-in-string
         '"\n${index}. ${ruleId}". '
       ) +
-      'Remember to escape `$` with backslash for CLI use.',
+      'Remember to escape `$` with backslash for CLI use. Note that ' +
+      'as with other types, will only be used with failing rules.',
     typeLabel: '{underline missingLintingTemplate}'
   },
   {
