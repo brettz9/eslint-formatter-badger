@@ -94,6 +94,12 @@ The other options are the same as those detailed in the CLI.
 
 This is what is used by the CLI. See the CLI for the available options.
 
+However, as a programmatic API, a few more type options are possible:
+
+1. `textColor` may be an array as well as a comma-separated string.
+1. For `ruleMap`, an object may be provided in place of a string
+    pointing to a module.
+
 ## CLI
 
 ![badges/cli.svg](./badges/cli.svg)
