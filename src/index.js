@@ -63,10 +63,11 @@ const badger = module.exports.badger = async ({
   const opts = noConfig
     ? options
     : configPath
-      // eslint-disable-next-line import/no-dynamic-require, global-require
+      // eslint-disable-next-line import/no-dynamic-require, node/global-require
       ? {...require(configPath), ...options}
       : {
-        // eslint-disable-next-line import/no-dynamic-require, global-require
+        // eslint-disable-next-line max-len
+        // eslint-disable-next-line import/no-dynamic-require, node/global-require
         ...require(
           packageJsonPath || resolve(process.cwd(), './package.json')
         ).eslintFormatterBadgerOptions,
@@ -261,7 +262,7 @@ const badger = module.exports.badger = async ({
   // DEFINITIONS OF USER
   const userRuleIdToType = ruleMap
     ? typeof ruleMap === 'string'
-      // eslint-disable-next-line global-require, import/no-dynamic-require
+      // eslint-disable-next-line node/global-require, import/no-dynamic-require
       ? require(ruleMap)
       : ruleMap
     : {};
@@ -384,7 +385,15 @@ const badger = module.exports.badger = async ({
     ) => {
       return (checkNonempty && failing) || filteredTypes.includes(type);
     }).sort(([typeA], [typeB]) => {
-      return filteredTypes.indexOf(typeA) > filteredTypes.indexOf(typeB);
+      const aIndex = filteredTypes.indexOf(typeA);
+      const bIndex = filteredTypes.indexOf(typeB);
+      return aIndex < bIndex
+        ? -1
+        : aIndex > bIndex
+          ? 1
+          // Shouldn't be duplicates
+          // istanbul ignore next
+          : 0;
     });
   }
 
@@ -517,11 +526,12 @@ module.exports.badgerEngine = async (cfg) => {
   } = cfg;
 
   const opts = configPath
-    // eslint-disable-next-line import/no-dynamic-require, global-require
+    // eslint-disable-next-line import/no-dynamic-require, node/global-require
     ? {...require(configPath), ...cfg}
     : packageJsonPath
       ? {
-        // eslint-disable-next-line import/no-dynamic-require, global-require
+        // eslint-disable-next-line max-len
+        // eslint-disable-next-line import/no-dynamic-require, node/global-require
         ...require(packageJsonPath).eslintFormatterBadgerOptions,
         ...cfg
       }

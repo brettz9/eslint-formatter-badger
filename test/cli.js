@@ -26,6 +26,9 @@ const cliOneFailingSuggestionCustomRuleMap = getFixturePath(
 const cliOneFailingSuggestionFiltered = getFixturePath(
   'cli-1-failing-suggestion-filtered.svg'
 );
+const cliOneFailingSuggestionFilteredReverse = getFixturePath(
+  'cli-1-failing-suggestion-filtered-reverse.svg'
+);
 const cliOneFailingSuggestionNonempty = getFixturePath(
   'cli-1-failing-suggestion-nonempty.svg'
 );
@@ -160,6 +163,39 @@ describe('Binary', function () {
       const expected = await readFile(cliOneFailingSuggestionFiltered, 'utf8');
       expect(contents).to.equal(expected);
     });
+
+    it(
+      'should execute main CLI (filteredTypes reverse order)',
+      async function () {
+        const {stdout, stderr} = await execFile(
+          binFile,
+          [
+            '--filteredTypes', 'problem,suggestion',
+            '--file', 'test/fixtures/sample.js',
+            '--logging', 'verbose',
+            '--noUseEslintIgnore',
+            '--noUseEslintrc',
+            outputPath
+          ],
+          {
+            timeout: 15000
+          }
+        );
+        if (stderr) {
+          // eslint-disable-next-line no-console
+          console.log('stderr', stderr);
+        }
+        expect(stdout).to.contain(
+          `Finished writing to ${outputPath}`
+        );
+        expect(stderr).to.equal('');
+        const contents = await readFile(outputPath, 'utf8');
+        const expected = await readFile(
+          cliOneFailingSuggestionFilteredReverse, 'utf8'
+        );
+        expect(contents).to.equal(expected);
+      }
+    );
 
     it('should execute main CLI (nonempty filteredTypes)', async function () {
       const {stdout, stderr} = await execFile(
