@@ -1,5 +1,9 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.3.0
+
+- Enhancement: Add `noEslintInlineConfig` option
+
 ## 0.2.0
 
 - Fix: Ensure sorting of `filteredTypes` works properly

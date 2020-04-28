@@ -20,6 +20,7 @@ const getResultsPath = (path) => {
 };
 const outputPath = getResultsPath('cli-results.svg');
 const cliOneFailingSuggestion = getFixturePath('cli-1-failing-suggestion.svg');
+const cliNoFailures = getFixturePath('cli-no-failures.svg');
 const cliOneFailingSuggestionCustomRuleMap = getFixturePath(
   'cli-1-failing-suggestion-custom-rulemap.svg'
 );
@@ -105,6 +106,37 @@ describe('Binary', function () {
       const expected = await readFile(cliOneFailingSuggestion, 'utf8');
       expect(contents).to.equal(expected);
     });
+
+    it(
+      'should execute main CLI with `noEslintInlineConfig`',
+      async function () {
+        const {stdout, stderr} = await execFile(
+          binFile,
+          [
+            '--file', 'test/fixtures/sample.js',
+            '--logging', 'verbose',
+            '--noUseEslintIgnore',
+            '--noUseEslintrc',
+            '--noEslintInlineConfig',
+            outputPath
+          ],
+          {
+            timeout: 15000
+          }
+        );
+        if (stderr) {
+          // eslint-disable-next-line no-console
+          console.log('stderr', stderr);
+        }
+        expect(stdout).to.contain(
+          `Finished writing to ${outputPath}`
+        );
+        expect(stderr).to.equal('');
+        const contents = await readFile(outputPath, 'utf8');
+        const expected = await readFile(cliNoFailures, 'utf8');
+        expect(contents).to.equal(expected);
+      }
+    );
 
     it('should execute main CLI using custom rule map', async function () {
       const {stdout, stderr} = await execFile(

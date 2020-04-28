@@ -541,6 +541,7 @@ module.exports.badgerEngine = async (cfg) => {
     file,
     noUseEslintIgnore = false,
     noUseEslintrc = false,
+    noEslintInlineConfig = false,
     eslintConfigPath = undefined,
     eslintRulesdir = undefined
   } = opts;
@@ -553,6 +554,7 @@ module.exports.badgerEngine = async (cfg) => {
 
   const cliConfig = {
     configFile: eslintConfigPath,
+    allowInlineConfig: !noEslintInlineConfig, // `true` is ESLint default
     ignore: !noUseEslintIgnore, // `true` `is ESLint default
     useEslintrc: !noUseEslintrc // `true` `is ESLint default
   };

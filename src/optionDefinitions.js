@@ -44,6 +44,11 @@ const optionDefinitions = [
       'inverse of ESLint\'s `ignore`. Defaults to `false`'
   },
   {
+    name: 'noEslintInlineConfig', type: Boolean,
+    description: 'Corresponds to inverse of ESLint\'s `allowInlineConfig`. ' +
+      'Defaults to `false`.'
+  },
+  {
     name: 'eslintConfigPath', type: String,
     description: 'Path to ESLint rc config file. Default is undefined.',
     typeLabel: '{underline path to eslint config}'
