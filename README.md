@@ -142,15 +142,15 @@ The particular arguments which may be of interest:
 - `--filteredTypes` - We choose the rule types of interest (in this case,
     "intrusive" and "vulnerability") as used in our rule map (where we
     have mapped the rule names to these types).
-- `--noEslintInlineConfig` - 3rd parties may disable rules you wish to check
+- `--noEslintInlineConfig` - 3rd parties may disable rules you wish to check,
     or they may reference rules which your config does not include,
     causing linting errors.
 - `--noUseEslintIgnore` - Don't apply our own `.eslintignore` to the explicit
     list of third party files we are including.
 - `--noUseEslintrc` - We don't want to check the normal hierarchy of `.eslintrc.*`
     files, as these are used by our and other projects' for their stylstic
-    concerns. We instead use `--config` to indicate the rules we wish to
-    be applied.
+    concerns. We instead use `--eslintConfigPath` to indicate the rules we
+    wish to be applied to our visited files (including dependencies).
 - `--eslintConfigPath` - Indicates the actual rules we want applied to third party
     files discovered to be used by, or by the dependencies of, the `--file`
     file passed to `es-file-traverse`.
