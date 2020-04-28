@@ -228,6 +228,7 @@ const badger = module.exports.badger = async ({
           mainTemplate,
           {
             total,
+            ruleMapCount,
             passing: total - aggregatedErrorsAndWarningsCount,
             errorTotal: aggregatedErrorCount,
             warningTotal: aggregatedWarningCount,
@@ -257,11 +258,6 @@ const badger = module.exports.badger = async ({
     textColor = textColor.split(',');
   }
 
-  if (singlePane) {
-    await printBadge();
-    return;
-  }
-
   // DEFINITIONS OF USER
   const userRuleIdToType = ruleMap
     ? typeof ruleMap === 'string'
@@ -272,6 +268,11 @@ const badger = module.exports.badger = async ({
 
   // Useful if presence in rule map indicates that a rule is of interest
   const ruleMapCount = Object.keys(userRuleIdToType).length;
+
+  if (singlePane) {
+    await printBadge();
+    return;
+  }
 
   // ALL RULES USED (passing or failing)
   const ruleIdToType = rulesMetaEntries.reduce((obj, [ruleId, info]) => {

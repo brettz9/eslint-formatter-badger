@@ -220,8 +220,11 @@ const optionDefinitions = [
     description: 'Defaults to' +
       getChalkTemplateSingleEscape(
         // eslint-disable-next-line no-template-curly-in-string
-        '"${lintingType}: ${failing}";'
+        '"${lintingType}: ${failing}"; '
       ) +
+      'passed: `text`, `lintingType`, `total`, `ruleMapCount`, `passing`, ' +
+      '`errorTotal`, `warningTotal`, `errorWarningsTotal`, `failing`, ' +
+      '`warnings`, `errors`, `failingPct`, `warningsPct`, `errorsPct`; ' +
       'remember to escape `$` with backslash for CLI use.',
     typeLabel: '{underline lintingTypeTemplate}'
   },

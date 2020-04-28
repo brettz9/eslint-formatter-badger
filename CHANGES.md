@@ -1,5 +1,11 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.5.1
+
+- Fix: Docs for `lintingTypeTemplate` were missing list of arguments.
+- Fix: Put `ruleMapCount` on `mainTemplate` (as added to
+    `lintingTypeTemplate`).
+
 ## 0.5.0
 
 - Enhancement: Provide `ruleMapCount` to `mainTemplate` (Useful if
