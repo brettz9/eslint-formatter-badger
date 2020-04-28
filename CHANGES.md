@@ -1,5 +1,11 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.4.0
+
+- Breaking change (CLI): Made `file` the default option and `outputPath`
+    non-default (use `-o` or `--outputPath`). Allows for easier use
+   (e.g., with passing on `es-file-traverse` results)
+
 ## 0.3.0
 
 - Enhancement: Add `noEslintInlineConfig` option

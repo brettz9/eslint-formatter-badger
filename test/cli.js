@@ -84,11 +84,11 @@ describe('Binary', function () {
       const {stdout, stderr} = await execFile(
         binFile,
         [
-          '--file', 'test/fixtures/sample.js',
+          'test/fixtures/sample.js',
           '--logging', 'verbose',
           '--noUseEslintIgnore',
           '--noUseEslintrc',
-          outputPath
+          '--outputPath', outputPath
         ],
         {
           timeout: 15000
@@ -118,7 +118,7 @@ describe('Binary', function () {
             '--noUseEslintIgnore',
             '--noUseEslintrc',
             '--noEslintInlineConfig',
-            outputPath
+            '--outputPath', outputPath
           ],
           {
             timeout: 15000
@@ -147,7 +147,7 @@ describe('Binary', function () {
           '--logging', 'verbose',
           '--noUseEslintIgnore',
           '--noUseEslintrc',
-          outputPath
+          '--outputPath', outputPath
         ],
         {
           timeout: 15000
@@ -177,7 +177,7 @@ describe('Binary', function () {
           '--logging', 'verbose',
           '--noUseEslintIgnore',
           '--noUseEslintrc',
-          outputPath
+          '--outputPath', outputPath
         ],
         {
           timeout: 15000
@@ -207,7 +207,7 @@ describe('Binary', function () {
             '--logging', 'verbose',
             '--noUseEslintIgnore',
             '--noUseEslintrc',
-            outputPath
+            '--outputPath', outputPath
           ],
           {
             timeout: 15000
@@ -238,7 +238,7 @@ describe('Binary', function () {
           '--logging', 'verbose',
           '--noUseEslintIgnore',
           '--noUseEslintrc',
-          outputPath
+          '--outputPath', outputPath
         ],
         {
           timeout: 15000
@@ -269,7 +269,7 @@ describe('Binary', function () {
             '--logging', 'verbose',
             '--noUseEslintIgnore',
             '--noUseEslintrc',
-            outputPath
+            '--outputPath', outputPath
           ],
           {
             timeout: 15000
@@ -304,7 +304,7 @@ describe('Binary', function () {
             '--logging', 'verbose',
             '--noUseEslintIgnore',
             '--noUseEslintrc',
-            outputPath
+            '--outputPath', outputPath
           ],
           {
             timeout: 15000
@@ -338,7 +338,7 @@ describe('Binary', function () {
             '--logging', 'verbose',
             '--noUseEslintIgnore',
             '--noUseEslintrc',
-            outputPath
+            '--outputPath', outputPath
           ],
           {
             timeout: 15000
@@ -372,7 +372,7 @@ describe('Binary', function () {
             '--logging', 'verbose',
             '--noUseEslintIgnore',
             '--noUseEslintrc',
-            outputPath
+            '--outputPath', outputPath
           ],
           {
             timeout: 15000
@@ -404,7 +404,7 @@ describe('Binary', function () {
           '--logging', 'verbose',
           '--noUseEslintIgnore',
           '--noUseEslintrc',
-          outputPath
+          '--outputPath', outputPath
         ],
         {
           timeout: 15000
@@ -432,7 +432,7 @@ describe('Binary', function () {
           '--file', 'test/fixtures/sample.js',
           '--noUseEslintIgnore',
           '--noUseEslintrc',
-          outputPath
+          '--outputPath', outputPath
         ],
         {
           timeout: 15000
@@ -455,7 +455,7 @@ describe('Binary', function () {
         [
           '--configPath',
           getFixturePath('config.js'),
-          outputPath
+          '--outputPath', outputPath
         ],
         {
           timeout: 15000
@@ -480,7 +480,7 @@ describe('Binary', function () {
         [
           '--packageJsonPath',
           getFixturePath('package.json'),
-          outputPath
+          '--outputPath', outputPath
         ],
         {
           timeout: 15000
@@ -508,7 +508,7 @@ describe('Binary', function () {
           '--logging', 'verbose',
           '--noUseEslintIgnore',
           '--noUseEslintrc',
-          outputPath
+          '--outputPath', outputPath
         ],
         {
           timeout: 15000

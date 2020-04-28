@@ -29,6 +29,7 @@ const getBracketedChalkTemplateEscape = (s) => {
 const optionDefinitions = [
   {
     name: 'file', type: String, multiple: true,
+    defaultOption: true,
     description: 'Repeat for each file or file glob you wish to be linted. ' +
       'Required.',
     typeLabel: '{underline file path}'
@@ -59,7 +60,7 @@ const optionDefinitions = [
     typeLabel: '{underline rules directory}'
   },
   {
-    name: 'outputPath', type: String, defaultOption: true, alias: 'o',
+    name: 'outputPath', type: String, alias: 'o',
     description: 'Path to which to save the file; defaults to ' +
       '"eslint-badge.svg" in the current working directory',
     typeLabel: '{underline outputPath}'
@@ -254,8 +255,8 @@ const cliSections = [
   {
     // Add italics: `{italic textToItalicize}`
     content: pkg.description +
-      '\n\n{italic eslint-formatter-badger [outputPath] --file file1.js ' +
-        '--file fileGlob*}'
+      '\n\n{italic eslint-formatter-badger [--outputPath path] file1.js ' +
+        'fileGlob*}'
   },
   {
     optionList: optionDefinitions
