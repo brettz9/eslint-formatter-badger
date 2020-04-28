@@ -1,5 +1,11 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.4.1
+
+- Fix: Ensure `configPath`, `ruleMap`, and `packageJsonPath` options
+    take into account current working directory
+- npm: Update devDeps
+
 ## 0.4.0
 
 - Breaking change (CLI): Made `file` the default option and `outputPath`

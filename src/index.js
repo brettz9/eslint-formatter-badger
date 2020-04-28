@@ -64,12 +64,15 @@ const badger = module.exports.badger = async ({
     ? options
     : configPath
       // eslint-disable-next-line import/no-dynamic-require, node/global-require
-      ? {...require(configPath), ...options}
+      ? {...require(resolve(process.cwd(), configPath)), ...options}
       : {
         // eslint-disable-next-line max-len
         // eslint-disable-next-line import/no-dynamic-require, node/global-require
         ...require(
-          packageJsonPath || resolve(process.cwd(), './package.json')
+          resolve(
+            process.cwd(),
+            packageJsonPath || './package.json'
+          )
         ).eslintFormatterBadgerOptions,
         ...options
       };
@@ -263,7 +266,7 @@ const badger = module.exports.badger = async ({
   const userRuleIdToType = ruleMap
     ? typeof ruleMap === 'string'
       // eslint-disable-next-line node/global-require, import/no-dynamic-require
-      ? require(ruleMap)
+      ? require(resolve(process.cwd(), ruleMap))
       : ruleMap
     : {};
 
@@ -527,12 +530,12 @@ module.exports.badgerEngine = async (cfg) => {
 
   const opts = configPath
     // eslint-disable-next-line import/no-dynamic-require, node/global-require
-    ? {...require(configPath), ...cfg}
+    ? {...require(resolve(process.cwd(), configPath)), ...cfg}
     : packageJsonPath
       ? {
         // eslint-disable-next-line max-len
-        // eslint-disable-next-line import/no-dynamic-require, node/global-require
-        ...require(packageJsonPath).eslintFormatterBadgerOptions,
+        // eslint-disable-next-line import/no-dynamic-require, node/global-require, max-len
+        ...require(resolve(process.cwd(), packageJsonPath)).eslintFormatterBadgerOptions,
         ...cfg
       }
       : cfg;
