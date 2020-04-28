@@ -173,22 +173,17 @@ The particular arguments which may be of interest:
 
 ## To-dos
 
-1. Allow `ruleMap` to accept multiple so can combine results (e.g.,
-    labeling all security rules in one map)
-1. When privileges (or [es-file-traverse](https://github.com/brettz9/es-file-traverse))
-    project is ready, document idea of listing linting of dependencies per
-    [eslint-plugin-privileges](https://github.com/brettz9/eslint-plugin-privileges)
-    ideas (currently an incomplete project), providing some security
-    or at least best practices assurances (ideally showcase by linting own
-    dependencies and showing as an extra badge in this README)
-    1. Provide a useful optional built-in config map based on security
+1. **Rule maps**
+    1. **Accept multiple `ruleMap`'s** so can combine results (e.g.,
+        labeling all security rules in one map)
+    1. **Bundle useful built-in config maps** (optional) based on security
         (e.g., `"no-eval": "vulernable", "no-global-assign": "intrusive"`)
-1. Option to pass on to another reporter (so don't need to add
+1. Option to **pass on to another reporter** (so don't need to add
     [eslint-multiplexer](https://github.com/pimlie/eslint-multiplexer)
     or [eslint-formatter-multiple](https://github.com/halkeye/eslint-formatter-multiple)
     in all cases. Could default to `spec` while allowing empty string
     if someone really didn't want any visuals.
-1. See about getting tooltips into `badge-up` if external SVG allows; so can
-    list all linting rules per section (also add to license-badger showing
+1. See about getting **tooltips into `badge-up`** if external SVG allows; so
+    can list all linting rules per section (also add to license-badger showing
     relevant npm packages per license type, and possibly the test names for
     failing Mocha tests in `mocha-badge-reporter`)
