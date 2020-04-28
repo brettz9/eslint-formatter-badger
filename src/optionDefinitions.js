@@ -85,7 +85,8 @@ const optionDefinitions = [
     name: 'filteredTypes', type: String, alias: 'f',
     description: 'Comma-separated list of specific linting types to display ' +
       'and/or "nonempty"; defaults to no filter; can be one of ' +
-      '"problem"|"suggestion"|"layout"|"uncategorized".',
+      '"problem"|"suggestion"|"layout"|"missing" (or a type added ' +
+      'in a `ruleMap`).',
     typeLabel: '{underline list of "nonempty" or value}'
   },
   {

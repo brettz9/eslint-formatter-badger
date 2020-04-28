@@ -1,5 +1,9 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.4.2
+
+- Fix: Help message for `filteredTypes`
+
 ## 0.4.1
 
 - Fix: Ensure `configPath`, `ruleMap`, and `packageJsonPath` options
