@@ -1,5 +1,9 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.6.0
+
+- Enhancement: Pass in `numFiles` to templates
+
 ## 0.5.1
 
 - Fix: Docs for `lintingTypeTemplate` were missing list of arguments.

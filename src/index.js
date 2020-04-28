@@ -152,6 +152,8 @@ const badger = module.exports.badger = async ({
   // Includes both passing and failing files
   let aggregatedLineCount = 0;
 
+  const numFiles = results.length;
+
   await Promise.all(
     results.map(async ({
       messages,
@@ -229,6 +231,7 @@ const badger = module.exports.badger = async ({
           {
             total,
             ruleMapCount,
+            numFiles,
             passing: total - aggregatedErrorsAndWarningsCount,
             errorTotal: aggregatedErrorCount,
             warningTotal: aggregatedWarningCount,
@@ -492,6 +495,8 @@ const badger = module.exports.badger = async ({
 
         total,
         ruleMapCount,
+        numFiles,
+
         passing: total - aggregatedErrorsAndWarningsCount,
         errorTotal: aggregatedErrorCount,
         warningTotal: aggregatedWarningCount,
