@@ -173,6 +173,8 @@ The particular arguments which may be of interest:
 
 ## To-dos
 
+1. Allow `ruleMap` to accept multiple so can combine results (e.g.,
+    labeling all security rules in one map)
 1. When privileges (or [es-file-traverse](https://github.com/brettz9/es-file-traverse))
     project is ready, document idea of listing linting of dependencies per
     [eslint-plugin-privileges](https://github.com/brettz9/eslint-plugin-privileges)
