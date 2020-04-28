@@ -102,6 +102,63 @@ However, as a programmatic API, a few more type options are possible:
 
 ![badges/cli.svg](./badges/cli.svg)
 
+## Usage example with `es-file-traverse`
+
+When we do not wish to lint all of `node_modules` nor do we need to lint
+entire project dependencies, we can use `es-file-traverse` to lint just
+those files which are actually in use in our project.
+
+It can be particularly useful to make badges advertising the degree
+to which we have looked out for weaknesses in the third-party code we
+are using.
+
+(Although any ESLint-based linting still depends on good faith (i.e., it is
+possible for dependencies to work around checks), one can still perform
+useful audits of the dependencies of one's project to catch problems of
+importance, such as finding code which introduces vulnerabilities or
+which is intrusive in polluting with globals, etc. (These tend to be more
+of the type of problems which third parties may be more willing to fix,
+as they are not mere stylistic concerns.))
+
+Here is an example of `eslint-formatter-badger` used to build our own
+third-party linting badge for `es-file-traverse`:
+
+```sh
+eslint-formatter-badger --mainTemplate=\"ESLint 3rd party light audit (\\${ruleMapCount} rules)\" --filteredTypes intrusive,vulnerability --ruleMap .eslintRuleTypeMap.json --outputPath badges/eslint-3rdparty.svg --noEslintInlineConfig --noUseEslintIgnore --noUseEslintrc --eslintConfigPath .eslintrc-3rdparty.js `es-file-traverse --file ./bin/cli.js --node --cjs`
+```
+
+The particular arguments which may be of interest:
+
+- `--mainTemplate` - We override the main badge content here to highlight not
+    the total of linting rules available but the total in our custom `ruleMap`
+    (i.e., `ruleMapCount`), which we use to indicate the number of applicable
+    rules.
+- `--ruleMap` - Rather than relying on the default of `meta.type` to
+    determine rule type, we map rules in the targeted file to our own types,
+    such as considering `no-eval` as belonging to a "vulnerability" type
+    (rather than to the more generic "problem" type). We can then can show
+    these types (and a count of their failures) in the badge (using
+    `--filteredTypes` to show the rule type(s) of interest).
+- `--filteredTypes` - We choose the rule types of interest (in this case,
+    "intrusive" and "vulnerability") as used in our rule map (where we
+    have mapped the rule names to these types).
+- `--noEslintInlineConfig` - 3rd parties may disable rules you wish to check
+    or they may reference rules which your config does not include,
+    causing linting errors.
+- `--noUseEslintIgnore` - Don't apply our own `.eslintignore` to the explicit
+    list of third party files we are including.
+- `--noUseEslintrc` - We don't want to check the normal hierarchy of `.eslintrc.*`
+    files, as these are used by our and other projects' for their stylstic
+    concerns. We instead use `--config` to indicate the rules we wish to
+    be applied.
+- `--eslintConfigPath` - Indicates the actual rules we want applied to third party
+    files discovered to be used by, or by the dependencies of, the `--file`
+    file passed to `es-file-traverse`.
+- (The code in backticks, i.e., beginning `es-file-traverse...`) - This
+    builds a list of files to pass to ESLint, i.e., only those files which
+    are actually used (whether a dependency or our own), in this case,
+    starting with the file `./bin/cli.js`.
+
 ## See also
 
 - [filesize-badger](https://github.com/brettz9/filesize-badger) - Locally created
