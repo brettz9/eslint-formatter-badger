@@ -210,8 +210,8 @@ const optionDefinitions = [
         '"ESLint (${passing}/${total} rules passing)";'
       ) +
       'passed `total`, `passing`, `errorTotal`, `warningTotal`, ' +
-      '`errorWarningsTotal`, `lineTotal`, `errorWarningsPct`; ' +
-      'remember to escape `$` with backslash for ' +
+      '`errorWarningsTotal`, `lineTotal`, `errorWarningsPct`, ' +
+      '`ruleMapCount`; remember to escape `$` with backslash for ' +
       'CLI use.',
     typeLabel: '{underline mainTemplate}'
   },

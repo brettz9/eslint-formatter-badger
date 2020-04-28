@@ -1,5 +1,10 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.5.0
+
+- Enhancement: Provide `ruleMapCount` to `mainTemplate` (Useful if
+    presence in rule map indicates that a rule is of interest)
+
 ## 0.4.2
 
 - Fix: Help message for `filteredTypes`

@@ -270,6 +270,9 @@ const badger = module.exports.badger = async ({
       : ruleMap
     : {};
 
+  // Useful if presence in rule map indicates that a rule is of interest
+  const ruleMapCount = Object.keys(userRuleIdToType).length;
+
   // ALL RULES USED (passing or failing)
   const ruleIdToType = rulesMetaEntries.reduce((obj, [ruleId, info]) => {
     let type;
@@ -487,6 +490,7 @@ const badger = module.exports.badger = async ({
         lintingType,
 
         total,
+        ruleMapCount,
         passing: total - aggregatedErrorsAndWarningsCount,
         errorTotal: aggregatedErrorCount,
         warningTotal: aggregatedWarningCount,
