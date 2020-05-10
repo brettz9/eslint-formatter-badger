@@ -1,5 +1,12 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.7.0
+
+- Docs: Update badges per latest devDep. updates
+- Testing: Update expectations per latest devDep. updates
+- npm: Update to stable `cypress-multi-reporters` since presently maintained
+- npm: Update eslint dep. and devDeps
+
 ## 0.6.0
 
 - Enhancement: Pass in `numFiles` to templates
