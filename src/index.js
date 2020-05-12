@@ -574,6 +574,13 @@ module.exports.badgerEngine = async (cfg) => {
   if (eslintRulesdir) {
     cliConfig.rulePaths = eslintRulesdir;
   }
+
+  // todo[eslint@>=7.1.0]: Esp. with this package requiring ESLint 7, we should
+  //   use the new `ESLint` class over this deprecated feature. However, a
+  //   replacement for the `CLIEngine` `getRules` method is not implemented
+  //   yet so see if added when ESLint updates. Also need to update mention of
+  //   `CLIEngine` in README See
+  //   https://github.com/eslint/eslint/blob/master/docs/user-guide/migrating-to-7.0.0.md#-the-cliengine-class-has-been-deprecated
   const cli = new CLIEngine(cliConfig);
 
   const {results} = cli.executeOnFiles(file);
