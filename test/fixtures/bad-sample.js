@@ -1,0 +1,2 @@
+// Bad parsing
+const ;

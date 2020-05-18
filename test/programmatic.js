@@ -39,6 +39,9 @@ const eslintBadgeWithFailingTemplatesPath = getFixturePath(
 );
 const outputPath = getResultsPath('results.svg');
 const eslintBadgeFixturePath = getFixturePath('eslint-badge.svg');
+const eslintBadgeBadSampleFixturePath = getFixturePath(
+  'eslint-badge-bad-sample.svg'
+);
 const mainEslintBadgeFixturePath = getFixturePath('main-eslint-badge.svg');
 const oneFailingSuggestion = getFixturePath('1-failing-suggestion.svg');
 const oneFailingSuggestionWithLines = getFixturePath(
@@ -122,6 +125,39 @@ describe('`badger`', function () {
       });
 
       it(
+        'should return `badgerEngine` results with parsing error',
+        async function () {
+          const {
+            results: returnedResults,
+            rulesMeta: returnedRulesMeta
+          } = await badgerEngine({
+            noUseEslintrc: true,
+            noUseEslintIgnore: true,
+            filteredTypes: 'suggestion,problem,parsingError',
+            eslintConfigPath: getFixturePath('eslint-config.js'),
+            // Using file contents from https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
+            //   though triggering a warning for one rule instead
+            file: 'test/fixtures/bad-sample.js',
+            textColor: 'orange,s{blue}',
+            logging
+          });
+          const contents = await readFile(eslintBadgePath, 'utf8');
+          const expected = await readFile(
+            eslintBadgeBadSampleFixturePath, 'utf8'
+          );
+          expect(contents).to.equal(expected);
+          expect([...returnedRulesMeta.entries()].some(([ruleId]) => {
+            return ruleId === 'curly';
+          })).to.be.true;
+          expect(returnedResults[0].filePath).to.contain(
+            'test/fixtures/bad-sample.js'
+          );
+          expect(returnedResults[0].errorCount).to.equal(1);
+          expect(returnedResults[0].warningCount).to.equal(0);
+        }
+      );
+
+      it(
         'should return `badgerEngine` results using rules with missing meta',
         async function () {
           const {
@@ -179,7 +215,8 @@ describe('`badger`', function () {
               '${warningTotal};\nerrorWarningsTotal: ${errorWarningsTotal}; ' +
               'failing: ${failing};\nwarnings: ${warnings}; errors: ' +
               '${errors};\nfailingPct: ${failingPct}; warningsPct: ' +
-              '${warningsPct}; errorsPct: ${errorsPct}',
+              '${warningsPct}; errorsPct: ${errorsPct}; typeCount: ' +
+              '${typeCount}',
             /* eslint-enable no-template-curly-in-string */
             // Using file contents from https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
             //   though triggering a warning for one rule instead

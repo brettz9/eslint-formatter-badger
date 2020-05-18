@@ -1,5 +1,12 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.9.0
+
+- Fix: Handling parsing errors
+- Enhancement: Pass `typeCounts` object to `mainTemplate` and `typeCount` to
+    `lintingTypeTemplate` and `missingLintingTemplate`
+- Docs: Fix badge
+
 ## 0.8.0
 
 - Enhancement: Add `eslintCache` and `eslintCacheLocation` options

@@ -1,6 +1,6 @@
 {
   "name": "eslint-formatter-badger",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Create badges to reflect the number/types of passing eslint rules.",
   "main": "src/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "cli": "./bin/cli.js",
     "coverage": "open-cli coverage/lcov-report/index.html",
     "coverage-badge": "coveradge badges/coverage-badge.svg",
-    "eslint-badge": "npm run cli -- badges/eslint-badge.svg --file .",
+    "eslint-badge": "npm run cli -- --outputPath badges/eslint-badge.svg --lintingTypeTemplate \"\\\\\\${lintingType}: \\\\\\${failing}/\\\\\\${typeCount}\" --file .",
     "eslint-formatted": "eslint -f ./src/index.js --ext=js,md,html .",
     "eslint": "eslint --ext=js,md,html .",
     "mocha": "mocha test/*.js",

@@ -232,6 +232,7 @@ const badger = module.exports.badger = async ({
             total,
             ruleMapCount,
             numFiles,
+            typeCounts,
             passing: total - aggregatedErrorsAndWarningsCount,
             errorTotal: aggregatedErrorCount,
             warningTotal: aggregatedWarningCount,
@@ -272,12 +273,8 @@ const badger = module.exports.badger = async ({
   // Useful if presence in rule map indicates that a rule is of interest
   const ruleMapCount = Object.keys(userRuleIdToType).length;
 
-  if (singlePane) {
-    await printBadge();
-    return;
-  }
-
   // ALL RULES USED (passing or failing)
+  const typeCounts = {};
   const ruleIdToType = rulesMetaEntries.reduce((obj, [ruleId, info]) => {
     let type;
     if (userRuleIdToType[ruleId]) {
@@ -292,9 +289,20 @@ const badger = module.exports.badger = async ({
     if (!type) {
       type = 'missing';
     }
+    if (!typeCounts[type]) {
+      typeCounts[type] = 0;
+    }
+    typeCounts[type]++;
     obj[ruleId] = type;
     return obj;
   }, {});
+
+  if (singlePane) {
+    await printBadge();
+    return;
+  }
+
+  let parsingErrorType = [];
 
   // FAILING TYPE COUNTS ONLY
   // Note: These messages are not in a consistent order
@@ -303,7 +311,11 @@ const badger = module.exports.badger = async ({
     severity // 1 for warnings or 2 for errors
     // message // , line, column, nodeType
   }) => {
-    const type = ruleIdToType[ruleId]; // e.g., "layout"
+    let type = ruleIdToType[ruleId]; // e.g., "layout"
+    if (ruleId === null) {
+      type = 'parsingError';
+      parsingErrorType = [type];
+    }
     if (!type) {
       throw new Error(
         `A rule in the results, \`${ruleId}\`, was not found in \`rulesMeta\``
@@ -333,9 +345,11 @@ const badger = module.exports.badger = async ({
   // ALL POSSIBLE TYPES PER USER (if any) + DEFAULTS
   const lintingTypes = ruleMap
     ? [...new Set([
-      ...defaultLintingTypes, ...Object.values(userRuleIdToType)
+      ...defaultLintingTypes,
+      ...parsingErrorType,
+      ...Object.values(userRuleIdToType)
     ])]
-    : defaultLintingTypes;
+    : [...defaultLintingTypes, ...parsingErrorType];
 
   const lintingTypesWithMissing = lintingTypes.map((type) => {
     const text = type.charAt().toUpperCase() + type.slice(1);
@@ -359,7 +373,8 @@ const badger = module.exports.badger = async ({
         return template(templ, {
           index: i + 1,
           ruleId,
-          lintingType: type
+          lintingType: type,
+          typeCount: typeCounts[type]
         });
       });
     };
@@ -496,6 +511,8 @@ const badger = module.exports.badger = async ({
         total,
         ruleMapCount,
         numFiles,
+
+        typeCount: typeCounts[lintingType],
 
         passing: total - aggregatedErrorsAndWarningsCount,
         errorTotal: aggregatedErrorCount,

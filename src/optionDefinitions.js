@@ -220,12 +220,12 @@ const optionDefinitions = [
       ) +
       'passed `total`, `passing`, `errorTotal`, `warningTotal`, ' +
       '`errorWarningsTotal`, `lineTotal`, `errorWarningsPct`, ' +
-      '`ruleMapCount`, and `numFiles`; remember to escape `$` ' +
-      'with backslash for CLI use.',
+      '`ruleMapCount`, `typeCounts` (object of types to counts), and ' +
+      '`numFiles`; remember to escape `$` with backslash for CLI use.',
     typeLabel: '{underline mainTemplate}'
   },
   {
-    name: 'lintingTypeTemplate',
+    name: 'lintingTypeTemplate', type: String,
     description: 'Defaults to' +
       getChalkTemplateSingleEscape(
         // eslint-disable-next-line no-template-curly-in-string
@@ -234,11 +234,12 @@ const optionDefinitions = [
       'passed: `text`, `lintingType`, `total`, `ruleMapCount`, `numFiles`, ' +
       '`passing`, `errorTotal`, `warningTotal`, `errorWarningsTotal`, ' +
       '`failing`, `warnings`, `errors`, `failingPct`, `warningsPct`, ' +
-      '`errorsPct`; remember to escape `$` with backslash for CLI use.',
+      '`errorsPct`, and ``typeCount`; remember to escape `$` with ' +
+      'backslash for CLI use.',
     typeLabel: '{underline lintingTypeTemplate}'
   },
   {
-    name: 'failingTemplate',
+    name: 'failingTemplate', type: String,
     description: 'If present, should be an ES6-template-as-string and will ' +
       'be passed `ruleId` and `index` (1-based) for each failing rule ID. ' +
       'Defaults to not being used. Remember to escape `$` with backslash ' +
@@ -246,9 +247,10 @@ const optionDefinitions = [
     typeLabel: '{underline failingTemplate}'
   },
   {
-    name: 'missingLintingTemplate',
-    description: 'ES6-template-as-string passed `ruleId` and `index` ' +
-      '(1-based) for each rule ID that is missing. Defaults to ' +
+    name: 'missingLintingTemplate', type: String,
+    description: 'ES6-template-as-string passed `ruleId`, `index` ' +
+      '(1-based), and `typeCount` for each rule ID that is missing. ' +
+      'Defaults to ' +
       getChalkTemplateSingleEscape(
         // eslint-disable-next-line no-template-curly-in-string
         '"\n${index}. ${ruleId}". '
