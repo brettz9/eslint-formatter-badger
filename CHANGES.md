@@ -1,5 +1,9 @@
 # CHANGES for eslint-formatter-badger
 
+## 0.8.0
+
+- Enhancement: Add `eslintCache` and `eslintCacheLocation` options
+
 ## 0.7.0
 
 - Docs: Update badges per latest devDep. updates

@@ -124,7 +124,7 @@ Here is an example of `eslint-formatter-badger` used to build our own
 third-party linting badge for `es-file-traverse`:
 
 ```sh
-eslint-formatter-badger --mainTemplate=\"ESLint 3rd party light audit (\\${ruleMapCount} rules)\" --filteredTypes intrusive,vulnerability --ruleMap .eslintRuleTypeMap.json --outputPath badges/eslint-3rdparty.svg --noEslintInlineConfig --noUseEslintIgnore --noUseEslintrc --eslintConfigPath .eslintrc-3rdparty.js `es-file-traverse --file ./bin/cli.js --node --cjs`
+eslint-formatter-badger --mainTemplate=\"ESLint 3rd party light audit (\\${ruleMapCount} rules)\" --filteredTypes intrusive,vulnerability --ruleMap .eslintRuleTypeMap.json --outputPath badges/eslint-3rdparty.svg --eslintCache --noEslintInlineConfig --noUseEslintIgnore --noUseEslintrc --eslintConfigPath .eslintrc-3rdparty.js `es-file-traverse --file ./bin/cli.js --node --cjs`
 ```
 
 The particular arguments which may be of interest:
@@ -142,6 +142,8 @@ The particular arguments which may be of interest:
 - `--filteredTypes` - We choose the rule types of interest (in this case,
     "intrusive" and "vulnerability") as used in our rule map (where we
     have mapped the rule names to these types).
+- `--eslintCache` - Sets ESLint `cache`, creating `.eslintcache`. Will be
+    removed if ESLint called without cache, but useful for performance.
 - `--noEslintInlineConfig` - 3rd parties may disable rules you wish to check,
     or they may reference rules which your config does not include,
     causing linting errors.

@@ -50,6 +50,15 @@ const optionDefinitions = [
       'Defaults to `false`.'
   },
   {
+    name: 'eslintCache', type: Boolean,
+    description: 'Whether to cache ESLint (using `eslintCacheLocation`). ' +
+      'Default is `false`.'
+  },
+  {
+    name: 'eslintCacheLocation', type: String,
+    description: 'Path to ESLint cache file (defaults to `.eslintcache`).'
+  },
+  {
     name: 'eslintConfigPath', type: String,
     description: 'Path to ESLint rc config file. Default is undefined.',
     typeLabel: '{underline path to eslint config}'

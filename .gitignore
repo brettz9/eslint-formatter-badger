@@ -3,3 +3,7 @@ node_modules
 
 coverage/**
 .nyc_output
+
+# Will have local test environment details, so ignore
+test/results/.eslintcache
+.eslintcache

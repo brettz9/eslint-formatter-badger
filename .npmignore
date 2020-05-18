@@ -9,3 +9,7 @@ coverage/**
 mocha-multi-reporters.json
 
 lgtm.yml
+
+# Will have local test environment details, so ignore
+test/results/.eslintcache
+.eslintcache

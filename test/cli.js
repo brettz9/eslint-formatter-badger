@@ -4,6 +4,8 @@ const {promisify} = require('util');
 const {join} = require('path');
 const {execFile: ef} = require('child_process');
 
+const moveFile = require('move-file');
+
 const readFile = promisify(rf);
 const execFile = promisify(ef);
 const unlink = promisify(ul);
@@ -134,6 +136,69 @@ describe('Binary', function () {
         expect(stderr).to.equal('');
         const contents = await readFile(outputPath, 'utf8');
         const expected = await readFile(cliNoFailures, 'utf8');
+        expect(contents).to.equal(expected);
+      }
+    );
+
+    it(
+      'should execute main CLI with `eslintCache` and `eslintCacheLocation`',
+      async function () {
+        let {stdout, stderr} = await execFile(
+          binFile,
+          [
+            '--file', 'test/fixtures/sample.js',
+            '--logging', 'verbose',
+            '--noUseEslintIgnore',
+            '--noUseEslintrc',
+            '--noEslintInlineConfig',
+            '--eslintCache',
+            '--outputPath', outputPath
+          ],
+          {
+            timeout: 15000
+          }
+        );
+        if (stderr) {
+          // eslint-disable-next-line no-console
+          console.log('stderr', stderr);
+        }
+        expect(stdout).to.contain(
+          `Finished writing to ${outputPath}`
+        );
+        expect(stderr).to.equal('');
+        let contents = await readFile(outputPath, 'utf8');
+        let expected = await readFile(cliNoFailures, 'utf8');
+        expect(contents).to.equal(expected);
+
+        await moveFile(
+          join(process.cwd(), '.eslintcache'), getResultsPath('.eslintcache')
+        );
+
+        ({stdout, stderr} = await execFile(
+          binFile,
+          [
+            '--file', 'test/fixtures/sample.js',
+            '--logging', 'verbose',
+            '--noUseEslintIgnore',
+            '--noUseEslintrc',
+            '--eslintCache',
+            '--eslintCacheLocation', getResultsPath('.eslintcache'),
+            '--outputPath', outputPath
+          ],
+          {
+            timeout: 15000
+          }
+        ));
+        if (stderr) {
+          // eslint-disable-next-line no-console
+          console.log('stderr', stderr);
+        }
+        expect(stdout).to.contain(
+          `Finished writing to ${outputPath}`
+        );
+        expect(stderr).to.equal('');
+        contents = await readFile(outputPath, 'utf8');
+        expected = await readFile(cliNoFailures, 'utf8');
         expect(contents).to.equal(expected);
       }
     );
