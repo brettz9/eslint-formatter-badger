@@ -177,7 +177,7 @@ const optionDefinitions = [
       'the `passingColor` (instead of `mediumColor` or `failingColor`). ' +
       'Comma-separated list of <key>=<value> pairs where the key ' +
       'is a linting type (e.g., "suggestion") and the value is a number ' +
-      'or percent.' +
+      'or percent. ' +
       'If set to a number, will be checked against the total of errors ' +
       'and warnings. If set to a percent, will be checked to the percent ' +
       'of errors and warnings relative to the total results. Defaults to ' +

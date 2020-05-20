@@ -1,5 +1,9 @@
 # CHANGES for eslint-formatter-badger
 
+## ?
+
+- Docs: Minor spacing fix
+
 ## 0.9.0
 
 - Fix: Handling parsing errors
