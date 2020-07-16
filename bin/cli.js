@@ -18,7 +18,7 @@ if (!optionDefinitions) { // cliBasics handled
 try {
   await badgerEngine(optionDefinitions);
 } catch (err) {
-  // eslint-disable-next-line no-console
+  // eslint-disable-next-line no-console -- Report error to user
   console.error(err);
   process.exit();
 }
