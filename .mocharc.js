@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  reporter: 'cypress-multi-reporters',
+  reporter: 'mocha-multi-reporters',
   'reporter-option': [
     'configFile=mocha-multi-reporters.json'
   ],

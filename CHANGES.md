@@ -3,6 +3,8 @@
 ## ?
 
 - Docs: Minor spacing fix
+- Testing: Switch to stable version of `mocha-multi-reporters`
+- npm: Update package-lock
 
 ## 0.9.0
 
