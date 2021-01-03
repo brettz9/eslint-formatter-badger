@@ -55,6 +55,9 @@ module.exports = {
     'import/no-commonjs': 0,
     'no-process-exit': 0,
     'compat/compat': 0,
-    'node/global-require': 'error'
+    'node/global-require': 'error',
+
+    // Ignore for now
+    'eslint-comments/require-description': 0
   }
 };

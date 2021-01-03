@@ -456,11 +456,9 @@ const badger = module.exports.badger = async ({
   function getThresholdForRangeAndType (range, type) {
     let thresh;
     if (thresholdContainer[range]) {
-      if (typeof thresholdContainer[range] === 'string') {
-        thresh = thresholdContainer[range];
-      } else {
-        thresh = thresholdContainer[range][type];
-      }
+      thresh = typeof thresholdContainer[range] === 'string'
+        ? thresholdContainer[range]
+        : thresholdContainer[range][type];
     }
     return thresh;
   }
@@ -596,7 +594,7 @@ module.exports.badgerEngine = async (cfg) => {
     cliConfig.rulePaths = eslintRulesdir;
   }
 
-  // todo[eslint@>=7.1.0]: Esp. with this package requiring ESLint 7, we should
+  // todo[eslint@>=8.0.0]: Esp. with this package requiring ESLint 7, we should
   //   use the new `ESLint` class over this deprecated feature. However, a
   //   replacement for the `CLIEngine` `getRules` method is not implemented
   //   yet so see if added when ESLint updates. Also need to update mention of

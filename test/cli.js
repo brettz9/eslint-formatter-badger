@@ -608,7 +608,7 @@ describe('Binary', function () {
             'test/fixtures/simple.js'
           ],
           {
-            maxBuffer: Infinity,
+            maxBuffer: Number.POSITIVE_INFINITY,
             stdio: 'inherit',
             timeout: 15000
           }

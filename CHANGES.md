@@ -1,9 +1,12 @@
 # CHANGES for eslint-formatter-badger
 
-## ?
+## 0.10.0
 
+- Linting (ESLint): As per latest ash-nazg
+- Docs: Update license badge per updates
 - Docs: Minor spacing fix
 - Testing: Switch to stable version of `mocha-multi-reporters`
+- npm: Update eslint and devDeps.
 - npm: Update package-lock
 
 ## 0.9.0
