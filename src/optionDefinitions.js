@@ -11,13 +11,13 @@ const pkg = require('../package.json');
 /* eslint-enable jsdoc/require-property */
 
 const getChalkTemplateSingleEscape = (s) => {
-  return s.replace(/[{}\\]/gu, (ch) => {
+  return s.replaceAll(/[{}\\]/gu, (ch) => {
     return `\\u${ch.codePointAt().toString(16).padStart(4, '0')}`;
   });
 };
 
 const getChalkTemplateEscape = (s) => {
-  return s.replace(/[{}\\]/gu, (ch) => {
+  return s.replaceAll(/[{}\\]/gu, (ch) => {
     return `\\\\u${ch.codePointAt().toString(16).padStart(4, '0')}`;
   });
 };
@@ -278,7 +278,9 @@ const cliSections = [
   }
 ];
 
+/* eslint-disable n/exports-style -- Needed */
 exports.getChalkTemplateSingleEscape = getChalkTemplateSingleEscape;
 exports.getBracketedChalkTemplateEscape = getBracketedChalkTemplateEscape;
 exports.definitions = optionDefinitions;
 exports.sections = cliSections;
+/* eslint-enable n/exports-style -- Needed */

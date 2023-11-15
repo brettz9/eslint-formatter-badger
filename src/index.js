@@ -6,7 +6,9 @@ const fs = require('fs');
 const {promisify} = require('util');
 const {resolve} = require('path');
 
-const {CLIEngine} = require('eslint');
+const {ESLint} = require('eslint');
+// const {builtinRules} = require('eslint/use-at-your-own-risk');
+
 const badgeUp = require('badge-up').v2;
 const template = require('es6-template-strings');
 
@@ -29,9 +31,9 @@ const defaultLintingTypes = [
 */
 
 /**
- * @param {external:ESLintResult[]} results
+ * @param {ESLintResult[]} results
  * @param {PlainObject} data
- * @param {external:ESLintRulesMetaData} data.rulesMeta
+ * @param {ESLintRulesMetaData} data.rulesMeta
  * @param {EslintFormatterBadgerOptions} [options]
  * @returns {""}
  */
@@ -47,8 +49,8 @@ module.exports = (results, {rulesMeta}, options = {}) => {
 
 /**
  * @param {FormatterBadgerOptions} cfg
- * @param {external:ESLintResult[]} cfg.results
- * @param {external:ESLintRulesMetaData} cfg.rulesMeta
+ * @param {ESLintResult[]} cfg.results
+ * @param {ESLintRulesMetaData} cfg.rulesMeta
  * @returns {Promise<void>}
  */
 const badger = module.exports.badger = async ({
@@ -63,11 +65,10 @@ const badger = module.exports.badger = async ({
   const opts = noConfig
     ? options
     : configPath
-      // eslint-disable-next-line import/no-dynamic-require, node/global-require
+      // eslint-disable-next-line import/no-dynamic-require, n/global-require
       ? {...require(resolve(process.cwd(), configPath)), ...options}
       : {
-        // eslint-disable-next-line max-len
-        // eslint-disable-next-line import/no-dynamic-require, node/global-require
+        // eslint-disable-next-line import/no-dynamic-require, n/global-require
         ...require(
           resolve(
             process.cwd(),
@@ -84,7 +85,7 @@ const badger = module.exports.badger = async ({
 
   /**
   * @typedef {PlainObject} EslintFormatterBadgerRuleMapOptions
-  * @property {external:RuleMap|external:EslintFormatterBadgerRuleMap} ruleMap
+  * @property {RuleMap|EslintFormatterBadgerRuleMap} ruleMap
   */
 
   /**
@@ -265,7 +266,7 @@ const badger = module.exports.badger = async ({
   // DEFINITIONS OF USER
   const userRuleIdToType = ruleMap
     ? typeof ruleMap === 'string'
-      // eslint-disable-next-line node/global-require, import/no-dynamic-require
+      // eslint-disable-next-line n/global-require, import/no-dynamic-require
       ? require(resolve(process.cwd(), ruleMap))
       : ruleMap
     : {};
@@ -539,8 +540,8 @@ const badger = module.exports.badger = async ({
 
 /**
 * @typedef {PlainObject} BadgerEngineResults
-* @property {external:ESLintResult[]} results
-* @property {external:ESLintRulesMetaData} rulesMeta
+* @property {ESLintResult[]} results
+* @property {ESLintRulesMetaData} rulesMeta
 */
 
 /**
@@ -554,12 +555,12 @@ module.exports.badgerEngine = async (cfg) => {
   } = cfg;
 
   const opts = configPath
-    // eslint-disable-next-line import/no-dynamic-require, node/global-require
+    // eslint-disable-next-line import/no-dynamic-require, n/global-require
     ? {...require(resolve(process.cwd(), configPath)), ...cfg}
     : packageJsonPath
       ? {
-        // eslint-disable-next-line max-len
-        // eslint-disable-next-line import/no-dynamic-require, node/global-require, max-len
+        // eslint-disable-next-line @stylistic/max-len
+        // eslint-disable-next-line import/no-dynamic-require, n/global-require, @stylistic/max-len
         ...require(resolve(process.cwd(), packageJsonPath)).eslintFormatterBadgerOptions,
         ...cfg
       }
@@ -585,7 +586,7 @@ module.exports.badgerEngine = async (cfg) => {
   const cliConfig = {
     cache: eslintCache,
     cacheLocation: eslintCacheLocation,
-    configFile: eslintConfigPath,
+    overrideConfigFile: eslintConfigPath,
     allowInlineConfig: !noEslintInlineConfig, // `true` is ESLint default
     ignore: !noUseEslintIgnore, // `true` `is ESLint default
     useEslintrc: !noUseEslintrc // `true` `is ESLint default
@@ -594,17 +595,14 @@ module.exports.badgerEngine = async (cfg) => {
     cliConfig.rulePaths = eslintRulesdir;
   }
 
-  // todo[eslint@>=8.0.0]: Esp. with this package requiring ESLint 7, we should
-  //   use the new `ESLint` class over this deprecated feature. However, a
-  //   replacement for the `CLIEngine` `getRules` method is not implemented
-  //   yet so see if added when ESLint updates. Also need to update mention of
-  //   `CLIEngine` in README See
-  //   https://github.com/eslint/eslint/blob/master/docs/user-guide/migrating-to-7.0.0.md#-the-cliengine-class-has-been-deprecated
-  const cli = new CLIEngine(cliConfig);
+  const cli = new ESLint(cliConfig);
 
-  const {results} = cli.executeOnFiles(file);
+  const results = await cli.lintFiles(file);
 
-  const rulesMeta = cli.getRules();
+  // This suffers from only getting failing rules
+  const rulesMeta = cli.getRulesMetaForResults(results);
+  // ...while this suffers from getting all rules whether used or not
+  // const rulesMeta = builtinRules;
 
   await badger({
     ...opts,

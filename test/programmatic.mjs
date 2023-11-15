@@ -1,8 +1,15 @@
 import {readFile as rf, unlink as ul} from 'fs';
 import {promisify} from 'util';
-import {join} from 'path';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import {join, dirname} from 'path';
+import {fileURLToPath} from 'url';
+
+// eslint-disable-next-line no-shadow -- Needed
+import * as chai from 'chai';
+// eslint-disable-next-line no-shadow -- Needed
+import {expect} from 'chai';
+// eslint-disable-next-line import/no-unresolved -- Bug
+import chaiAsPromised from '@rvagg/chai-as-promised';
+
 import delay from 'delay';
 // eslint-disable-next-line import/no-named-default
 import {badger, badgerEngine, default as mainBadger} from '../src/index.js';
@@ -11,7 +18,9 @@ import simpleRulesMeta from './fixtures/simpleRulesMeta.js';
 import consoleRulesMeta from './fixtures/consoleRulesMeta.js';
 import simpleResults from './fixtures/simpleResults.js';
 import results from './fixtures/results.js';
-import noConsoleResults from './fixtures/noConsoleResults.js';
+import noConsoleResults from './fixtures/noConsoleResults.cjs';
+
+const dir = dirname(fileURLToPath(import.meta.url));
 
 chai.use(chaiAsPromised);
 
@@ -21,13 +30,13 @@ const readFile = promisify(rf);
 const unlink = promisify(ul);
 
 const getFixturePath = (path) => {
-  return join(__dirname, `fixtures/${path}`);
+  return join(dir, `fixtures/${path}`);
 };
 const getResultsPath = (path) => {
-  return join(__dirname, `results/${path}`);
+  return join(dir, `results/${path}`);
 };
 
-const eslintBadgePath = join(__dirname, '../eslint-badge.svg');
+const eslintBadgePath = join(dir, '../eslint-badge.svg');
 const eslintBadgeWithTemplatesPath = getFixturePath(
   'eslintBadgeWithTemplatesPath.svg'
 );
@@ -104,7 +113,7 @@ describe('`badger`', function () {
         } = await badgerEngine({
           noUseEslintrc: true,
           noUseEslintIgnore: true,
-          eslintConfigPath: getFixturePath('eslint-config.js'),
+          eslintConfigPath: getFixturePath('eslint-config.cjs'),
           // Using file contents from https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
           //   though triggering a warning for one rule instead
           file: 'test/fixtures/simple.js',
@@ -134,7 +143,7 @@ describe('`badger`', function () {
             noUseEslintrc: true,
             noUseEslintIgnore: true,
             filteredTypes: 'suggestion,problem,parsingError',
-            eslintConfigPath: getFixturePath('eslint-config.js'),
+            eslintConfigPath: getFixturePath('eslint-config.cjs'),
             // Using file contents from https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
             //   though triggering a warning for one rule instead
             file: 'test/fixtures/bad-sample.js',
@@ -168,7 +177,7 @@ describe('`badger`', function () {
             noUseEslintIgnore: true,
             eslintRulesdir: [getFixturePath('rules')],
             eslintConfigPath: getFixturePath(
-              'eslint-config-with-custom-rules.js'
+              'eslint-config-with-custom-rules.cjs'
             ),
             // Using file contents from https://eslint.org/docs/developer-guide/working-with-custom-formatters#the-data-argument
             //   though triggering a warning for one rule instead
@@ -203,7 +212,7 @@ describe('`badger`', function () {
           } = await badgerEngine({
             noUseEslintrc: true,
             noUseEslintIgnore: true,
-            eslintConfigPath: getFixturePath('eslint-config.js'),
+            eslintConfigPath: getFixturePath('eslint-config.cjs'),
             /* eslint-disable no-template-curly-in-string */
             mainTemplate: 'total: ${total}; passing: ${passing};\n' +
               'errorTotal: ${errorTotal}; warningTotal: ${warningTotal}; ' +
@@ -247,7 +256,7 @@ describe('`badger`', function () {
           } = await badgerEngine({
             noUseEslintrc: true,
             noUseEslintIgnore: true,
-            eslintConfigPath: getFixturePath('eslint-config.js'),
+            eslintConfigPath: getFixturePath('eslint-config.cjs'),
             /* eslint-disable no-template-curly-in-string */
             failingTemplate: '\nruleId: ${ruleId}; index: ${index}',
             /* eslint-enable no-template-curly-in-string */
@@ -324,7 +333,7 @@ describe('`badger`', function () {
       await badger({
         results: noConsoleResults,
         rulesMeta: consoleRulesMeta,
-        configPath: getFixturePath('config.js'),
+        configPath: getFixturePath('config.cjs'),
         outputPath
       });
       const contents = await readFile(outputPath, 'utf8');
@@ -341,7 +350,7 @@ describe('`badger`', function () {
         // eslint-disable-next-line no-template-curly-in-string
         mainTemplate: '${passing}/${total}; lineTotal: ${lineTotal}',
         rulesMeta: consoleRulesMeta,
-        configPath: getFixturePath('config.js'),
+        configPath: getFixturePath('config.cjs'),
         outputPath
       });
       const contents = await readFile(outputPath, 'utf8');

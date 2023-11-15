@@ -2,8 +2,7 @@
 
 module.exports = {
   extends: [
-    'ash-nazg/sauron',
-    'plugin:node/recommended-script'
+    'ash-nazg/sauron-node-script-overrides'
   ],
   env: {
     browser: false,
@@ -11,7 +10,16 @@ module.exports = {
   },
   overrides: [
     {
+      files: '**/*.mjs',
+      parserOptions: {
+        sourceType: 'module'
+      }
+    },
+    {
       files: 'test/**',
+      parserOptions: {
+        sourceType: 'module'
+      },
       extends: [
         'plugin:@fintechstudios/eslint-plugin-chai-as-promised/recommended',
         'plugin:chai-expect-keywords/recommended',
@@ -25,7 +33,7 @@ module.exports = {
         mocha: true
       },
       rules: {
-        'node/no-unsupported-features/es-syntax': ['error', {
+        'n/no-unsupported-features/es-syntax': ['error', {
           ignores: ['modules']
         }],
         'chai-expect-keywords/no-unsupported-keywords': [
@@ -51,11 +59,14 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
   },
+  parserOptions: {
+    ecmaVersion: 2022
+  },
   rules: {
     'import/no-commonjs': 0,
     'no-process-exit': 0,
     'compat/compat': 0,
-    'node/global-require': 'error',
+    'n/global-require': 'error',
 
     // Ignore for now
     'eslint-comments/require-description': 0

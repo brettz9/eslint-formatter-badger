@@ -1,24 +1,28 @@
-'use strict';
-const {readFile: rf, unlink: ul} = require('fs');
-const {promisify} = require('util');
-const {join} = require('path');
-const {execFile: ef} = require('child_process');
+import {readFile as rf, unlink as ul} from 'fs';
+import {promisify} from 'util';
+import {join, dirname} from 'path';
+import {fileURLToPath} from 'url';
+import {execFile as ef} from 'child_process';
 
-const moveFile = require('move-file');
+// eslint-disable-next-line no-shadow -- Needed
+import {expect} from 'chai';
+import {moveFile} from 'move-file';
+
+const dir = dirname(fileURLToPath(import.meta.url));
 
 const readFile = promisify(rf);
 const execFile = promisify(ef);
 const unlink = promisify(ul);
 
-const binFile = join(__dirname, '../bin/cli.js');
-const eslintBadgePath = join(__dirname, '../eslint-badge.svg');
-const eslintBinFile = join(__dirname, '../node_modules/eslint/bin/eslint.js');
+const binFile = join(dir, '../bin/cli.mjs');
+const eslintBadgePath = join(dir, '../eslint-badge.svg');
+const eslintBinFile = join(dir, '../node_modules/eslint/bin/eslint.js');
 
 const getFixturePath = (path) => {
-  return join(__dirname, `fixtures/${path}`);
+  return join(dir, `fixtures/${path}`);
 };
 const getResultsPath = (path) => {
-  return join(__dirname, `results/${path}`);
+  return join(dir, `results/${path}`);
 };
 const outputPath = getResultsPath('cli-results.svg');
 const cliOneFailingSuggestion = getFixturePath('cli-1-failing-suggestion.svg');
@@ -207,7 +211,7 @@ describe('Binary', function () {
       const {stdout, stderr} = await execFile(
         binFile,
         [
-          '--ruleMap', getFixturePath('ruleMap.js'),
+          '--ruleMap', getFixturePath('ruleMap.cjs'),
           '--file', 'test/fixtures/sample.js',
           '--logging', 'verbose',
           '--noUseEslintIgnore',
@@ -519,7 +523,7 @@ describe('Binary', function () {
         binFile,
         [
           '--configPath',
-          getFixturePath('config.js'),
+          getFixturePath('config.cjs'),
           '--outputPath', outputPath
         ],
         {
@@ -604,7 +608,7 @@ describe('Binary', function () {
             '--no-ignore',
             '--no-eslintrc',
             '--config',
-            './test/fixtures/eslint-config.js',
+            './test/fixtures/eslint-config.cjs',
             'test/fixtures/simple.js'
           ],
           {
